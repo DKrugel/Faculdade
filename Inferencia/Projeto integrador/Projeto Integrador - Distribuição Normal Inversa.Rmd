@@ -1,0 +1,422 @@
+---
+title: "Projeto Integrador - Distribuição Normal Inversa"
+author: "Alexandra Luiza Stabach"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+fontsize: 12pt
+number_sections: yes
+toc: yes
+---
+
+# Resumo
+
+
+
+# Introdução
+
+
+
+# Modelo Probabilístico:
+
+Uma variável aleatória contínua Y tem distribução normal inversa, com dois parâmetros reais positivos ($\mu$ e $\lambda$) se sua função densidade de probabilidade for da forma:
+
+\begin{center}
+$f(y;\mu,\lambda)= \left( \frac{\lambda}{2 \pi y ^3} \right) ^\frac{1}{2} exp \left[- \frac{\lambda (y-\mu)^2}{2\mu^2 y} \right]$
+\end{center}
+
+É denotada por $Y \sim NI \left( \mu , \lambda \right )$ e possui suporte nos reais positivos não nulos ($R_{*}^+$). Sua função de probabilidade acumulada apresenta a seguinte estrutura:
+
+\begin{center}
+$F(y;\mu,\lambda)= \Phi \left(\sqrt{\frac{\lambda}{y}} \left( \frac{y}{\mu} -1 \right) \right)+ exp \left( \frac{2\lambda}{\mu} \right) \Phi \left( - \sqrt{\frac{\lambda}{y}} \left( \frac{y}{\mu}+1 \right) \right)$
+\end{center}
+
+Onde $\Phi$ representa a distribuição normal padrão, com média $\mu=0$ e desvio padrão $\sigma=1$.
+
+Amplamente utilizada em processos estocásticos na física, onde descreve a distribuição do tempo que um Movimento Browniano, com movimento positivo, leva para chegar em um certo estado positivo. Disso surge o nome "Normal Inversa": enquanto a distribuição normal descreve o estado de um Movimento Browniano com tempo fixo, a inversa descreve o tempo com estado fixo.
+
+## Espaço Paramétrico:
+
+Os parâmetros da distribuição normal inversa são:
+
+\begin{center}
+$\mu \in \mathbb R_{*}^+$
+
+$\lambda \in \mathbb R_{*}^+$
+\end{center}
+
+Onde $\mu$ representa a média da distribuição, e $\lambda$ representa o parâmetro de dispersão da distribuição. Para melhor visualização, serão apresentadas as formas gráficas da distribuição, variando seus valores para apresentar as variações na forma dos gráficos:
+
+## Gráficos em R:
+
+### Variando a média:
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE }
+
+library(SuppDists)
+par(mfrow=c(1,1), mar=c(3,3,1,0)+.5, mgp=c(1.6,0.6,0), las = 1, cex.lab = 1, cex.axis = 0.8)
+plot(function(x)dinvGauss(x,0.25,1),0,2,cex=3,xlab="y",ylab="P(Y=y)",lwd=3)
+plot(function(x)dinvGauss(x,1,1),0,2,add=TRUE,col="green",lty=2,lwd=3)
+plot(function(x)dinvGauss(x,5,1),0,2,add=TRUE,col="red",lty=3,lwd=3)
+plot(function(x)dinvGauss(x,10,1),0,2,add=TRUE,col="blue",lty=4,lwd=3)
+legend(1.2,2, legend = c(expression(paste(mu, " = 0.25 ",lambda, " = 1")), 
+                       expression(paste(mu, " = 1, ",lambda, " = 1")),
+                       expression(paste(mu, " = 5, ",lambda, " = 1")),
+                       expression(paste(mu, " = 10, ",lambda, " = 1"))), 
+       lty = c(1,2,3,4), col = c("black","green","red","blue"), bty = "n")
+grid()
+
+```
+
+### Variando o parâmetro de dispersão:
+
+```{r,echo=FALSE}
+
+par(mfrow=c(1,1), mar=c(3,3,1,0)+.5, mgp=c(1.6,0.6,0), las = 1, cex.lab = 1, cex.axis = 0.8)
+plot(function(x)dinvGauss(x,1,0.25),0,2,cex=3,xlab="y",ylab="P(Y=y)",lwd=3)
+plot(function(x)dinvGauss(x,1,1),0,2,add=TRUE,col="green",lty=2,lwd=3)
+plot(function(x)dinvGauss(x,1,5),0,2,add=TRUE,col="red",lty=3,lwd=3)
+plot(function(x)dinvGauss(x,1,10),0,2,add=TRUE,col="blue",lty=4,lwd=3)
+legend(1.4,1.3, legend = c(expression(paste(mu, " = 1 ",lambda, " = 0.25")), 
+                       expression(paste(mu, " = 1, ",lambda, " = 1")),
+                       expression(paste(mu, " = 1, ",lambda, " = 5")),
+                       expression(paste(mu, " = 1, ",lambda, " = 10"))), 
+       lty = c(1,2,3,4), col = c("black","green","red","blue"), bty = "n")
+grid()
+
+```
+
+É possível perceber pelos gráficos que a assimetria aumenta conforme $\mu$ aumenta e diminui conforme o aumento de $\lambda$.
+
+
+## Função normal inversa como uma distribuição de probabilidade e implementação computacional em R
+
+Para que uma função seja considerada distribuição de probabilidade, ela deve atender duas condições:
+
+1º Todos os elementos da imagem devem ser maiores ou iguais a zero:
+
+Como a função possui suporte e espaço paramétrico constituidos pelos números Reais positivos não nulos, fica evidente que a função atende este requisito, já que em nenhuma operação matemática terá seus seus termos negativados.
+
+2º A soma de todos os valores deve ser igual a 1:
+
+A integral da função normal inversa não pode ser expressa, deste modo a prova foi realizada computacionalmente através do Método de Simpson. Para isso a função foi implementada em R, através da criação de uma "function", como demonstrado abaixo:
+
+```{r echo=TRUE,message=FALSE,warning=FALSE}
+# Implementação da função
+
+N.Inv <- function(y,mu,lambda){
+    if(y>0){
+        if(mu>=0){
+            f<-(lambda/(2*pi*y^3))^(1/2)*exp(-(lambda*(y-mu)^2)/(2*(mu^2)*y))
+            return(f)
+        }
+    }
+}
+
+
+
+#Método de Simpson
+
+espaçamento<-seq(0.1,5,by=0.1)
+
+valor <- c()
+i<-1
+while(i<=50){
+        valor[i]<-N.Inv(espaçamento[i],1,1)
+        i<-i+1
+}
+
+pares<-c()
+impares<-c()
+i<-2
+while(i<=49){
+        if(i%%2==0){
+                pares[i]<-(valor[i])
+                i<-i+1
+        }
+        else{
+                impares[i]<-(valor[i])
+                i<-i+1
+        }
+}
+
+Integral<-(0.1/3)*(valor[1]+valor[50]+4*sum((valor[seq(2,49,by=2)]))
+                   +2*sum((valor[seq(1,49,by=2)])))
+Soma.das.Integrais <- sum(Integral)
+```
+
+A soma das integrais é `r Soma.das.Integrais`, o valor é aproximado por se tratar de uma integração numérica, mas podemos perceber que atende a condição, portanto, pode ser considerada uma distribuição de probabilidade.
+
+### Média e Variância
+
+A esperança e a variância de $Y$ são $E[Y]=\mu$, que é um dos parâmetros, e $Var[Y]= \frac{\mu^3}{\lambda}$. Elas se relacionam positivamente, então conforme a média aumenta a variância também
+é aumentada, porém de maneira mais rápida.
+
+## Exemplo de aplicação
+
+A distribuição normal inversa é adequada para variáves aleatórias estritamente positivas não nulas. Para melhor ilustrar sua aplicação será usada a variavel volume de madeira (em polegadas cubicas), presente no dataset (conjunto de dados) "trees" - já disponível no R - , que reune medições de 31 cerejeiras. Considerando $\mu = 30,17097$ e $\lambda = 101,6431$ - obtido atravez da variância, pois como $Var[Y]= \frac{\mu^3}{\lambda}$, então $\lambda= \frac{\mu^3}{\sigma^2}$- temos o segunte gráfico:
+
+```{r echo=FALSE}
+data("trees")
+volume <- trees[,3]
+volume.medio <- mean(volume)
+lambda <- (volume.medio^3)/var(volume)
+library(SuppDists)
+par(mfrow=c(1,1))
+plot(function(volume)dinvGauss(volume,volume.medio,lambda),
+     col="black",xlim=c(0,100),
+     xlab="y",ylab="P(Y=y)",main="mu= 30.17, lambda= 101.6431")
+grid()
+```
+
+Se utilizássemos uma distribuição normal, neste mesmo conjunto de dados, com $\mu = 30,17097$ e $\sigma^2 = 270.2028$, obteriamos o seguinte gráfico:
+
+```{r echo=FALSE, fig.align='center'}
+data("trees")
+volume <- trees[,3]
+volume.medio <- mean(volume)
+desvio.p.volume <- sd(volume)
+par(mfrow=c(1,2))
+plot(function(volume)dnorm(volume,volume.medio,desvio.p.volume),
+     col="black",xlim=c(-50,100),
+     xlab="y",ylab="P(Y=y)",main="mu= 30.17097, sigma = 16.43785")
+grid()
+plot(function(volume)dnorm(volume,volume.medio,desvio.p.volume),
+     col="black",xlim=c(0,100),
+     xlab="y",ylab="P(Y=y)",main="mu= 30.17097, sigma = 16.43785")
+grid()
+
+```
+
+Como podemos observar a normal inversa representa melhor nossa variável, pois a variável volume pode assumir apenas valores positivos não nulos, o que coincide com o suporte da normal inversa.
+
+# Simulação de dados
+
+Podemos gerar números aleatórios que seguem uma distribuição normal inversa em R por meio da função rinvGauss, à qual deve ser informada o tamanho da amostra (n), a média ($\mu$) e a sua dispersão ($\lambda$), a função é disponibilizada pelo pacote SuppDists. Neste trabalho usaremos esse método para a simulação de dados, visando possibilitar uma conclusão mais apurada na estimação dos parâmetros.
+
+Baseado no exemplo do volume do tronco de cerejeiras, apresentado anteriormente, é gerada uma amostra de 1300 itens, com $\mu = 30.2$ e $\lambda = 101.6$.
+
+```{r}
+library(SuppDists)
+set.seed(312)
+DadosSimulados <- rinvGauss(1300, 30.2, 101.6)
+```
+
+
+# Verossimilhança e log-verossimilhança
+
+A função de verossimilhança pode ser obtida se as variáveis aleatórias forem independentes e identicamente distribuidas, no caso de distribuição normal inversa ela é dada por:
+
+\begin{center}
+$L(\mu,\lambda|y) = \displaystyle\prod_{i=1}^{n} \left(  \left( \frac{\lambda}{2 \pi y^3_i} \right) ^\frac{1}{2}  exp \left[ \frac{-\lambda (y_i-\mu)^2}{2 \mu^2 y_i} \right] \right)$,
+\end{center}
+
+
+que pode ser simplificada com
+
+\begin{center}
+$L(\mu,\lambda|y) = \left( \frac{\lambda}{2 \pi} \right) ^\frac{n}{2}  \left( \displaystyle\prod_{i=1}^{n}\frac{1}{y^3_i} \right) ^\frac{1}{2}   \displaystyle\prod_{i=1}^{n} exp \left[ \frac{-\lambda (y_i-\mu)^2}{2 \mu^2 y_i} \right]$
+
+$L(\mu,\lambda|y) = \left( \frac{\lambda}{2 \pi} \right) ^\frac{n}{2}  \left( \displaystyle\prod_{i=1}^{n}\frac{1}{y^3_i} \right) ^\frac{1}{2} \displaystyle\prod_{i=1}^{n} exp \left[ \frac{-\lambda y_i^2}{2 \mu^2 y_i}+\frac{2 \lambda \mu y_i}{2 \mu^2 y_i}-\frac{\lambda \mu^2}{2 \mu^2 y_i} \right]$
+
+$L(\mu,\lambda|y) = \left( \frac{\lambda}{2 \pi}\right)^\frac{n}{2}  \left( \displaystyle\prod_{i=1}^{n}\frac{1}{y^3_i} \right) ^\frac{1}{2} exp \left[ \frac{-\lambda}{2 \mu^2} \displaystyle\sum_{i=1}^{n} \frac{y_i^2}{y_i} + \frac{2 \lambda \mu}{2 \mu^2} \displaystyle\sum_{i=1}^{n} \frac{y_i}{y_i} - \frac{\lambda \mu^2}{2 \mu^2} \displaystyle\sum_{i=1}^{n} \frac{1}{y_i} \right]$
+
+$L(\mu,\lambda|y) = \left( \frac{\lambda}{2 \pi} \right) ^\frac{n}{2}  \left( \displaystyle\prod_{i=1}^{n}\frac{1}{y^3_i} \right) ^\frac{1}{2} exp \left[ \frac{-\lambda}{2 \mu^2} \displaystyle\sum_{i=1}^{n} y_i + \frac{\lambda}{\mu} \displaystyle\sum_{i=1}^{n} 1 - \frac{\lambda}{2} \displaystyle\sum_{i=1}^{n} \frac{1}{y_i} \right]$
+\end{center} 
+
+até a forma
+
+\begin{center}
+$L(\mu,\lambda|y) = \left( \frac{\lambda}{2 \pi} \right) ^\frac{n}{2}  \left(\displaystyle\prod_{i=1}^{n}\frac{1}{y^3_i} \right) ^\frac{1}{2} exp \left[ \frac{-\lambda}{2 \mu^2} \displaystyle\sum_{i=1}^{n} y_i + \frac{n \lambda}{\mu} - \frac{\lambda}{2} \displaystyle\sum_{i=1}^{n} \frac{1}{y_i} \right]$
+\end{center}
+
+Já a função de log-verossimilhança é dada por
+
+\begin{center}
+$l(\mu,\lambda|y) = \frac{n}{2} log \left( \frac{\lambda}{2 \pi} \right)  + \frac{1}{2} \displaystyle\sum_{i=1}^{n} log \left( \frac{1}{y^3_i} \right)  - \frac{\lambda}{2 \mu^2} \displaystyle\sum_{i=1}^{n} y_i + \frac{n \lambda}{\mu} - \frac{\lambda}{2} \displaystyle\sum_{i=1}^{n} \frac{1}{y_i}$
+\end{center}
+
+## Escore
+
+A função escore é obtida a partir da derivada da log-verossimilhança, como temos dois parâmetros, teremos  o vetor escore, que é dado por $U(\mu, \lambda | Y) = \left( \frac{\partial}{\partial \mu}, \frac{\partial}{\partial \lambda} \right)^T$. Assim a função escore de $\mu$ é dada por
+
+\begin{center}
+$U_\mu (\mu, \lambda | Y) = \frac{\partial}{\partial \mu} \left[ \frac{n}{2} log \left( \frac{\lambda}{2 \pi} \right)  + \frac{1}{2} \displaystyle\sum_{i=1}^{n} log \left( \frac{1}{y^3_i} \right)  - \frac{\lambda}{2 \mu^2} \displaystyle\sum_{i=1}^{n} y_i + \frac{n \lambda}{\mu} - \frac{\lambda}{2} \displaystyle\sum_{i=1}^{n} \frac{1}{y_i} \right]$
+
+$U_\mu (\mu, \lambda | Y) = \left[ \frac{\lambda}{\mu^3} \displaystyle\sum_{i=1}^{n} y_i - \frac{n \lambda}{\mu^2} \right]$
+\end{center}
+
+E a função escore de $\lambda$ é dada por
+
+\begin{center}
+$U_\lambda (\mu, \lambda | Y) = \frac{\partial}{\partial \lambda} \left[ \frac{n}{2} log \left( \frac{\lambda}{2 \pi} \right)  + \frac{1}{2} \displaystyle\sum_{i=1}^{n} log \left( \frac{1}{y^3_i} \right)  - \frac{\lambda}{2 \mu^2} \displaystyle\sum_{i=1}^{n} y_i + \frac{n \lambda}{\mu} - \frac{\lambda}{2} \displaystyle\sum_{i=1}^{n} \frac{1}{y_i} \right]$
+
+$U_\lambda (\mu, \lambda | Y) = \left[ \frac{n}{2} \frac{1}{\frac{\lambda}{2 \pi}} \frac{1}{2 \pi} - \frac{1}{2 \mu^2} \displaystyle\sum_{i=1}^{n} y_i + \frac{n}{\mu} - \frac{1}{2} \displaystyle\sum_{i=1}^{n} \frac{1}{y_i} \right]$ 
+
+$U_\lambda (\mu, \lambda | Y) = \left[ \frac{n}{2 \lambda} - \frac{1}{2 \mu^2} \displaystyle\sum_{i=1}^{n} y_i + \frac{n}{\mu} - \frac{1}{2} \displaystyle\sum_{i=1}^{n} \frac{1}{y_i} \right]$
+
+$U_\lambda (\mu, \lambda | Y) = \left[ \frac{n(\mu + 2 \lambda)}{2 \lambda \mu} - \frac{1}{2 \mu^2} \displaystyle\sum_{i=1}^{n} y_i - \frac{1}{2} \displaystyle\sum_{i=1}^{n} \frac{1}{y_i} \right]$
+\end{center}
+
+Portanto o vetor escore da normal inversa é 
+
+$U(\mu, \lambda | Y) = \left( \frac{\lambda}{\mu^3} \displaystyle\sum_{i=1}^{n} y_i - \frac{n \lambda}{\mu^2} , \frac{n(\mu + 2 \lambda)}{2 \lambda} - \frac{1}{2 \mu^2} \displaystyle\sum_{i=1}^{n} y_i - \frac{1}{2} \displaystyle\sum_{i=1}^{n} \frac{1}{y_i} \right)$
+
+# Estimador de Máxima Verossimilhança (EMV)
+
+Para se obter o estimador de máxima verossimilhança o vetor escore deve atender a igualdades de Bartlett, assim sendo $E[U(\mu, \lambda |  Y)] = 0$.
+
+Para que $E[U_\mu(\mu, \lambda |  Y)]$ seja igual a $0$, $\widehat{\mu}$ deve ser igual a $\frac{\displaystyle\sum_{i=1}^{n} y_i}{n}$, já que
+
+\begin{center}
+$\frac{\widehat{\lambda}}{\widehat{\mu}^3} \displaystyle\sum_{i=1}^{n} y_i - \frac{n \widehat{\lambda}}{\widehat{\mu}^2} = 0$ $\Longrightarrow$ 
+$\frac{\widehat{\lambda}}{\widehat{\mu}^3} \displaystyle\sum_{i=1}^{n} y_i = \frac{n \widehat{\lambda}}{\widehat{\mu}^2}$ $\Longrightarrow$
+$\frac{\widehat{\lambda}}{\widehat{\mu}} \displaystyle\sum_{i=1}^{n} y_i = n \widehat{\lambda}$ $\Longrightarrow$
+$\displaystyle\sum_{i=1}^{n} y_i = \frac{n \widehat{\mu} \widehat{\lambda}}{\widehat{\lambda}}$
+
+$\widehat{\mu} = \frac{\displaystyle\sum_{i=1}^{n} y_i}{n}$
+\end{center}
+
+E para que $E[U_\lambda(\mu, \lambda |  Y)]$ seja igual a $0$, $\widehat{\lambda}$ deve ser igual a $\frac{n \widehat{\mu}^2}{\widehat{\mu} \left( \widehat{\mu}\displaystyle\sum_{i=1}^{n} \frac{1}{y_i} -2n \right) + \displaystyle\sum_{i=1}^{n} y_i}$, já que
+
+\begin{center}
+$\frac{n(\widehat{\mu} + 2 \widehat{\lambda})}{2 \widehat{\lambda} \widehat{\mu}} - \frac{1}{2 \widehat{\mu}^2} \displaystyle\sum_{i=1}^{n} y_i - \frac{1}{2} \displaystyle\sum_{i=1}^{n} \frac{1}{y_i} = 0$ $\Longrightarrow$
+$\frac{n(\widehat{\mu} + 2 \widehat{\lambda})}{2 \widehat{\lambda} \widehat{\mu}} = \frac{1}{2 \widehat{\mu}^2} \displaystyle\sum_{i=1}^{n} y_i + \frac{1}{2} \displaystyle\sum_{i=1}^{n} \frac{1}{y_i}$
+
+$n(\widehat{\mu} + 2 \widehat{\lambda}) = \frac{2 \widehat{\lambda} \widehat{\mu}}{2 \widehat{\mu}^2} \displaystyle\sum_{i=1}^{n} y_i + \frac{2 \widehat{\lambda} \widehat{\mu}}{2} \displaystyle\sum_{i=1}^{n} \frac{1}{y_i}$ $\Longrightarrow$
+$n(\widehat{\mu} + 2 \widehat{\lambda}) = \frac{\widehat{\lambda}}{\widehat{\mu}} \displaystyle\sum_{i=1}^{n} y_i + \widehat{\lambda} \widehat{\mu} \displaystyle\sum_{i=1}^{n} \frac{1}{y_i}$ 
+
+$n\widehat{\mu} + 2 \widehat{\lambda}n = \frac{ \widehat{\lambda} \displaystyle\sum_{i=1}^{n} y_i + \widehat{\lambda} \widehat{\mu}^2 \displaystyle\sum_{i=1}^{n} \frac{1}{y_i}}{\widehat{\mu}}$ $\Longrightarrow$
+$n\widehat{\mu}^2 + 2 n\widehat{\lambda}\widehat{\mu}  = \widehat{\lambda} \displaystyle\sum_{i=1}^{n} y_i + \widehat{\lambda} \widehat{\mu}^2 \displaystyle\sum_{i=1}^{n} \frac{1}{y_i}$
+
+$n\widehat{\mu}^2 = \widehat{\lambda} \displaystyle\sum_{i=1}^{n} y_i + \widehat{\lambda} \widehat{\mu}^2 \displaystyle\sum_{i=1}^{n} \frac{1}{y_i} - 2 n\widehat{\lambda}\widehat{\mu}$ $\Longrightarrow$
+$n\widehat{\mu}^2 = \widehat{\lambda} \left( \displaystyle\sum_{i=1}^{n} y_i + \widehat{\mu}^2 \displaystyle\sum_{i=1}^{n} \frac{1}{y_i} - 2 n\widehat{\mu} \right)$
+
+$\widehat{\lambda} = \frac{n\widehat{\mu}^2}{\displaystyle\sum_{i=1}^{n} y_i + \widehat{\mu}^2 \displaystyle\sum_{i=1}^{n} \frac{1}{y_i} - 2 n\widehat{\mu}}$ $\Longrightarrow$ $\widehat{\lambda} = \frac{n\widehat{\mu}^2}{\widehat{\mu} \left( \widehat{\mu} \displaystyle\sum_{i=1}^{n} \frac{1}{y_i} - 2 n \right) + \displaystyle\sum_{i=1}^{n} y_i}$
+\end{center}
+
+## Matriz de Informação Observada
+
+
+A matriz de informação observada é dada por $I_O = \begin{bmatrix} -\frac{\partial^2 l(\theta)}{\partial \mu^2}  & -\frac{\partial l(\theta)}{\partial \mu \partial \lambda} \\ -\frac{\partial l(\theta)}{\partial \lambda \partial \mu} & -\frac{\partial^2 l(\theta)}{\partial \lambda^2} \end{bmatrix}$.
+
+O elemento $i_{11} = - \frac{\partial}{\partial \mu} U_\mu(\mu, \lambda|Y)$ é igual a $\frac{3\lambda}{\mu^4} \displaystyle\sum_{i=1}^{n} y_i - \frac{2n \lambda}{\mu^3}$. O elemento $i_{22} = -\frac{\partial}{\partial \lambda} U_\lambda(\mu, \lambda|Y)$ é igual a $\frac{n}{2 \lambda^2}$. O elemento $i_{12}=-\frac{\partial l(\theta)}{\partial \mu \partial \lambda}$ é igual a $\frac{n}{\mu^2}$ e o elemento $i_{21}=-\frac{\partial l(\theta)}{\partial \lambda \partial \mu}$ é igual a $\frac{n-1}{\mu^2}$. Portanto obtemos a matriz 
+
+\begin{center}
+$I_O = \begin{bmatrix} \frac{3\lambda}{\mu^4} \displaystyle\sum_{i=1}^{n} y_i - \frac{2n \lambda}{\mu^3}  & \frac{n}{\mu^2} - \frac{\displaystyle\sum_{i=1}^{n} y_i}{\mu^3} \\ \frac{n}{\mu^2} - \frac{\displaystyle\sum_{i=1}^{n} y_i}{\mu^3} & \frac{n}{2 \lambda^2} \end{bmatrix}$
+\end{center}
+
+## Matriz de Informação Esperada
+
+
+A matriz de informação esperada é dada pela esperança da matriz observada, ou seja
+
+\begin{center}
+$I_E = \begin{bmatrix} \frac{n \lambda}{\mu^3} & 0 \\ 0 & \frac{n}{2 \lambda^2} \end{bmatrix}$
+\end{center}, 
+
+pois $E \left[ \frac{3\lambda}{\mu^4} \displaystyle\sum_{i=1}^{n} y_i - \frac{2n \lambda}{\mu^3} \right]$ pode ser reescrita como 
+
+\begin{center}
+$E \left[ \left( \frac{3\lambda}{\mu^4} \displaystyle\sum_{i=1}^{n} y_i - \frac{2n \lambda}{\mu^3} \right) \frac{n}{n} \right]$ $\Longrightarrow$
+$E \left[ \frac{3\lambda}{\mu^4} \frac{n}{n} \displaystyle\sum_{i=1}^{n} y_i - \frac{2n^2 \lambda}{n \mu^3}\right]$ $\Longrightarrow$
+$ \frac{3\lambda}{\mu^4} E \left[n \frac{\displaystyle\sum_{i=1}^{n} y_i}{n}\right] - \frac{2n\lambda}{\mu^3}$
+
+$ \frac{3\lambda}{\mu^4} n E \left[\frac{\displaystyle\sum_{i=1}^{n} y_i}{n}\right] - \frac{2n\lambda}{\mu^3}$ $\Longrightarrow$
+$ \frac{3\lambda}{\mu^4} n \mu - \frac{2n\lambda}{\mu^3}$ $\Longrightarrow$
+$ \frac{3\lambda n}{\mu^3} - \frac{2n\lambda}{\mu^3}$ $\Longrightarrow$
+$\frac{3\lambda n-2n\lambda}{\mu^3}$ $\Longrightarrow$
+$\frac{n\lambda}{\mu^3}$
+\end{center}
+
+e $E \left[ \frac{n}{\mu^2} - \frac{\displaystyle\sum_{i=1}^{n} y_i}{\mu^3} \right]$ pode ser reescrita como
+
+\begin{center}
+$\frac{n}{\mu^2} - \frac{1}{\mu^3} E \left[ \frac{n}{n} \displaystyle\sum_{i=1}^{n} y_i \right]$
+$\Longrightarrow$
+$\frac{n}{\mu^2} - \frac{1}{\mu^3} n E \left[ \frac{\displaystyle\sum_{i=1}^{n} y_i}{n} \right]$
+$\Longrightarrow$
+$\frac{n}{\mu^2} - \frac{n}{\mu^3} \mu$
+$\Longrightarrow$
+$\frac{n}{\mu^2} - \frac{n}{\mu^2} = 0$
+\end{center}
+
+## Estimação Intervalar
+
+Utilizando a distribuição assintótica do estimador de máxima verossimilhança, quando $n$ tende a infinito, pode-se escrever
+
+\begin{center}
+$\begin{bmatrix} \widehat{\mu} \\ \widehat{\lambda} \end{bmatrix} \sim NI \left( \begin{bmatrix} \mu \\ \lambda \end{bmatrix} ; \Sigma = \begin{bmatrix} \frac{\mu}{n \lambda}  &  0 \\ 0  & \frac{2\lambda^2}{n} \end{bmatrix} \right)$
+\end{center}
+
+Assim sendo o intervalo assintótico de $\mu$ é dado por $\widehat{\mu} \pm Z_\frac{\alpha}{2} \sqrt{\frac{\widehat{\mu}^3}{n \widehat{\lambda}}}$ e o intervalo assintótico de $\lambda$ é dado por $\widehat{\lambda} \pm Z_\frac{\alpha}{2} \sqrt{\frac{2 \widehat{\lambda}}{n}}$.
+
+
+# Estimações para Dados Simulados
+
+Utilizando o EMV podemos encontar a média e o parâmetro de dispersão estimados para as 1300 medições simuladas anteriormente. Computacionalmente: 
+
+```{r message=FALSE,warning=FALSE}
+### Estimadores pontuais
+
+library(SuppDists)
+y <- DadosSimulados
+n <- 1300
+
+MuEstimado <- sum(y)/n
+
+LambdaEstimado <- (n * (MuEstimado^2))/(MuEstimado * (MuEstimado * sum(1/y)
+                                                      - 2*n) + sum(y))
+```
+
+Deste modo temos que $\widehat{\mu}$ é `r MuEstimado` e $\widehat{\lambda}$ é `r LambdaEstimado`, valores próximos aos verdadeiros, 30,2 para $\mu$ e 101,6 para $\lambda$.  Podemos também encontar o intervalo de confiança assintótico
+
+```{r}
+### Estimadores intervalares assintóticos
+
+alfa <- 0.05
+Z <- qnorm(1-alfa/2)
+
+Intervalo_Mu <-  c(MuEstimado - Z * sqrt((MuEstimado^3)/(n*LambdaEstimado)), 
+                   MuEstimado + Z * sqrt((MuEstimado^3)/(n*LambdaEstimado)))
+
+Intervalo_Lambda <- c(LambdaEstimado - Z * sqrt((2 * LambdaEstimado)/n),
+                      LambdaEstimado + Z * sqrt((2 * LambdaEstimado)/n))
+```
+
+Assim podemos afirmar, com 95% de confiança que o intervalo `r Intervalo_Mu` contém a verdadeira média para o volume - em polegada - das cerejeiras e que o intervalo `r Intervalo_Lambda` contém o verdadeiro parâmetro de dispersão.
+
+# Teste de Hipóteses
+
+Suponhamos que uma fábrica produz lâmpadas que possuem uma vida útil média de 3500 horas, por estudos anteriores sabe-se que ela segue uma distribuição normal inversa com lambda igual a $5,8309 \times 10^{-6}$. Como deseja-se verificar se houve alguma alteração na média após a troca de algumas das máquinas, será avaliado um novo lote, com 500 unidades, e realizar-se-á um teste Wald, sob as seguintes hipóteses: $H_0: \mu = \mu_0$ e $H_1: \mu \ne \mu_0$, com alfa de 5%. Computacionalmente temos:
+
+```{r}
+library(SuppDists)
+set.seed(600)
+l <- 0.0000058309
+Lampadas <- rinvGauss(500, 3500, l)
+
+x <- Lampadas
+m <- 500
+
+Mu_zero <- sum(x)/m
+
+### Teste Wald
+
+Zn <- (3500 - Mu_zero)/sqrt((Mu_zero^3)/l)
+```
+
+Já que no teste Wald a estatística $Z_n$ é dada por $\left( \frac{\widehat{\mu} - \mu_0}{\sqrt{V \left( \widehat{\mu} \right) }}\right)$, $Z_n =$ `r Zn`. Como quando n tende a infinito $Z_n \sim N(0,1)$, Z crítico é dado por $\pm$ 1.959964 e graficamnte temos:
+
+Assim, não rejeitamos $H_0$ e assumimos que $\mu = \mu_0$, com 95% de confiança.
+
+# Referências
+
+TACONELI, CÉSAR A..  b **FAMÍLIA EXPONENCIAL DE DISTRIBUIÇÕES**. Curitiba, 2019. Total de 22 páginas. Disponível em: https://docs.ufpr.br/~taconeli/CE22516/Aula4.pdf. Acesso em: jun. 2021.
+
+PÉREZ. FERNANDO L.. **Modelos Lineares Generalizados**, 2021. leg.ufpr. Disponível em: http://leg.ufpr.br/~lucambio/GLM/GLM.html. Acesso em: jun. 2021.
+
+Wiki, 2021. **Distribuição normal inversa**. Disponível em: dept.abcdef.wiki . Acesso em: jun. 2021.
+
+Wiki, 2020. **Distribuição Gaussiana Inversa - Inverse Gaussian distribution**. Disponível em: pt.abcdef.wiki . Acesso em: jun. 2021.

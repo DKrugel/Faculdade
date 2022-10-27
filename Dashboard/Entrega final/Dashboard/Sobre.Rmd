@@ -1,0 +1,11 @@
+---
+title: "Sobre"
+output: html_document
+date: '2022-08-16'
+---
+
+## Dashboard para visualização de dados
+Este Dashboard foi feito para matéria CE062B Dashboard ofertada pelo departamento de Estatística ministrada pelo professor Walmes Zeviani.
+
+A Base de dados foi retirada do Kaggle neste https://www.kaggle.com/datasets/alanjo/graphics-card-full-specs
+

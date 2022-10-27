@@ -1,0 +1,82 @@
+---
+title: "Exemplo"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    social: menu
+    source_code: embed
+  runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(shiny)
+library(plotly)
+library(data.table)
+
+gpu.comp <- read_csv("H:/Faculdade/Dashboard/Shiny Apps/Dashboard feito pelo Caio/gpu_db.csv")
+
+gpu <- gpu.comp %>% 
+  filter(!is.na(releaseYear))
+
+total_manuf <- gpu %>% 
+  group_by(manufacturer) %>% 
+  summarise(Total=n())
+
+total_ano <- gpu %>% 
+  group_by(releaseYear) %>% 
+  summarise(Total=n())
+
+clock_ano <- gpu %>% 
+  group_by(releaseYear) %>% 
+  summarise(Media=mean(gpuClock))
+
+memoria_ano <- gpu %>% 
+  group_by(releaseYear) %>% 
+  summarise(Media=mean(memSize,na.rm=TRUE))
+```
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+
+### Variáveis
+
+```{r}
+sliderInput("Slider","Selecione a Faixa Temporal",min=min(clock_ano$releaseYear),max=max(clock_ano$releaseYear),value = c(round(mean(clock_ano$releaseYear)-5),round(mean(clock_ano$releaseYear))+5))
+```
+
+Column 
+-----------------------------------------------------------------------
+
+### Evolução anual de Clock
+
+```{r}
+renderPlotly({
+  dados_selecionados <- filter(clock_ano,between(clock_ano$releaseYear,input$Slider[1],input$Slider[2]))
+  
+  g <- dados_selecionados %>% 
+    ggplot(aes(x=releaseYear,y=Media))+
+      geom_point()+
+      geom_line()+
+      xlab("Anos")+
+      ylab("Clock Médio")
+  
+  ggplotly(g)
+})
+```
+
+### Evolução anual de Memória
+
+```{r}
+renderPlotly({
+  dados_selecionados2 <- filter(memoria_ano,between(memoria_ano$releaseYear,input$Slider[1],input$Slider[2]))
+  
+  h <- dados_selecionados2 %>% 
+    ggplot(aes(x=releaseYear,y=Media))+
+      geom_bar(stat="identity")
+  
+  ggplotly(h)
+})
+```

@@ -1,0 +1,13 @@
+name: Dashboard2
+title: Dashboard2
+username:
+account: krugel
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6881864
+bundleId: 6253215
+url: https://krugel.shinyapps.io/Dashboard2/
+when: 1661892696.40645
+lastSyncTime: 1661892696.40647
+asMultiple: FALSE
+asStatic: FALSE
