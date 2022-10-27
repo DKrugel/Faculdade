@@ -101,15 +101,20 @@ var(est)
 sd(est)
 
 #Gerando a consistencia do estimador
-n <- seq(50,1000, by = 50)
+n <- seq(150,1000, by = 50)
 variancia <- numeric(length(n))
+desvio <- numeric(length(n))
+
 pos <- 1
-variancia <- var(replicate(1000, p.est(0.3,n)))
+#variancia <- var(replicate(1000, p.est(0.3,n)))
 for(pos in 1:length(n)){
   print(pos)
-  variancia[pos] <- var(replicate(10000, p.est(0.3,n[pos])))
-  
+#  variancia[pos] <- var(replicate(1000, p.est(0.3,n[pos])))
+ desvio[pos] <-  mean(replicate(1000, p.est(0.3,n[pos])) - 0.3)
 }
 
 plot(variancia ~ n, type = 'l', main = 'Plot do valor da variancia de 10000 replicações dado N amostras',
      xlab = 'Num de amostras em cada repetição', ylab = 'Variância das simulações')
+plot(desvio[-1] ~ n[-1], type = 'l', main = 'Plot do valor da variancia de 10000 replicações dado N amostras',
+     xlab = 'Num de amostras em cada repetição', ylab = 'Media de estimado - verdadeiro')
+  
