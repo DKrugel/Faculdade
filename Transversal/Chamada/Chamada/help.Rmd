@@ -1,0 +1,22 @@
+---
+title: "HELP"
+author: "Daniel Krügel"
+date: '2022-08-16'
+output: html_document
+---
+
+## Tutorial
+
+Olá! Se você chegou até aqui é por que é um monitor de uma disciplina Transversal e quer dar uma facilitada na hora de criar chamadas para o Moodle, então eu criei este aplicativo Shiny para te ajudar!
+
+Vamos lá, o aplicativo é bem simples, a caixa na aba HOME são todos os controles que serão necessários, nas primeiras duas é digitado o horário de início da aula no formato (HH:MM), nas duas caixa a baixo é digitado o horário final da aula, também no formato (HH:MM), assim será gerado 4 horários aleatórios como sugestões para as chamadas!
+
+O Slider abaixo irá controlar a quantidade de palavras que aparecerá abaixo, também, são sugestões de palavras para serem utilizadas!
+
+No mais é só isso! Desejo a todos um ótimo semestre!
+
+[Site das transversais](https://transversais.ufpr.br/)
+
+## Autor
+Daniel Krügel
+16/08/2022

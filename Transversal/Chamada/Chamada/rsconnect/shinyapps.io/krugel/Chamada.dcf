@@ -1,0 +1,13 @@
+name: Chamada
+title: Chamada
+username:
+account: krugel
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6793680
+bundleId: 6207300
+url: https://krugel.shinyapps.io/Chamada/
+when: 1660669789.54341
+lastSyncTime: 1660669789.54342
+asMultiple: FALSE
+asStatic: FALSE
