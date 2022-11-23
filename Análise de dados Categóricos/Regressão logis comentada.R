@@ -55,3 +55,40 @@ mod.fit.optim$convergence
 # Observe que o primeiro argumento na função nomeada em fn deve corresponder às estimativas dos 
 # parâmetros iniciais; é por isso que beta foi dado como o primeiro argumento em logL().
 # O valor TRUE para o argumento hessiano instrui R a obter uma estimativa numérica da matriz hessiana para os parâmetros
+
+beta0.values<-seq(from = -5, to = 18, by = 0.1)
+beta1.values<-seq(from = -0.65, to = 0.25, by = 0.01)
+count<-1
+save.logL<-numeric(length(beta0.values)*length(beta1.values))
+for (beta0 in beta0.values) {
+  for (beta1 in beta1.values) {
+    save.logL[count]<-logL(beta = c(beta0, beta1), x = placekick$distance, Y = placekick$good)
+    count<-count+1
+  }
+}
+max(save.logL) #Método de minimização manual, invés de fazer optim utilizar uma ideia de grid
+
+w <- aggregate ( formula = good ~ distance , data = placekick , FUN = sum )
+n <- aggregate ( formula = good ~ distance , data = placekick , FUN = length )
+# Aggregate tenta relacionar duas ou mais variáveis do dataset através da função especificada no
+#   Argumento FUN, no caso a somatória e o comprimento da variável resposta
+
+w.n <- data.frame ( distance = w$distance , success = w$good , 
+                    trials = n$good , proportion = round ( w$good /n$good ,4) )
+#Criando um novo dataset para aplicação de pesos
+
+mod.fit.bin <- glm( formula = success / trials ~ distance , 
+                    weights = trials , family = binomial ( link = logit ), data = w.n)
+# Pesos atribuidos com o numero de tentativas realizadas em cada ensaio, ainda utilizando o link logito
+
+summary (mod.fit.bin)
+summary(mod.fit2)
+
+library(car)
+car::Anova (mod.fit2 , test = "LR") #Tabela Anova não ordenada
+
+#Utilizando Anova para comprar se a adição da variável Change é significativa
+mod.fit.H0 <- glm( formula = good ~ distance , family = binomial ( link = logit ), data = placekick )
+anova (mod.fit.H0 , mod.fit2 , test = "Chisq") # Significatvio entre 1 e 5 por cento
+
+
