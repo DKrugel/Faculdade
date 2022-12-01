@@ -57,6 +57,21 @@ wilson.inter <- data.frame(temperatura = tb$temp,
 
 ######## FALTOU UMA ALTERNATIVA ################
 
+alpha <- 0.05
+pi2 <-  1/30
+pi1 <-  5/6
+n1 <- 30
+n2 <- 30
+pi <- 26/60  # w+/n+
+#Teste onde pi1 - pi2 == 0 é a hipótese nula e pi1 - pi2 > 0 é a alternativa, portanto é um teste unilateral
+
+# Estatística teste
+
+Z0 <- (pi1-pi2)/(pi*(1-pi)*((1/n1)+(1/n2)))
+
+Z0 >= qnorm(p = 1-alpha/2)
+
+# Valor da estatística teste de 48.86, maior do que o nível de significancia estipulado
 
 ################
 ###Questão 13###
@@ -129,5 +144,25 @@ var.log.or<-1/c.table[1,1] + 1/c.table[1,2] + 1/c.table[2,1] + 1/c.table[2,2]
 OR.CI<-exp(log(OR) + qnorm(p = c(alpha/2, 1-alpha/2)) * sqrt(var.log.or))
 round(OR.CI, 2)
 
+1/round(OR.CI, 2)
 
 
+# O resultado do teste Chi quadrado e da razão de chances, tudo indica para que haja uma realação entre o uso de preservativos
+# e a redução de casos testados de HIV positivo
+
+
+########################
+##### Questão 17 ######
+######################
+
+
+c.table <- array(data = c(118,155,93,51), dim = c(2,2),
+                          dimnames = list( First = c("Outra lingua","Nativo"), Second = c("Engraçado","Não"))); c.table
+
+prop.table(c.table)
+
+prop.test(c.table)
+
+oddratio <- (c.table[1,1] * c.table[2,2]) / ( c.table[1,2] * c.table [2,1])
+
+1/oddratio
