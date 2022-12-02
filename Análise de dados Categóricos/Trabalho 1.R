@@ -55,8 +55,6 @@ wilson.inter <- data.frame(temperatura = tb$temp,
                          lower = lower.wilson,
                          upper = upper.wilson)
 
-######## FALTOU UMA ALTERNATIVA ################
-
 alpha <- 0.05
 pi2 <-  1/30
 pi1 <-  5/6
@@ -119,8 +117,8 @@ AgrestCaffo.dif <- function(pi1, pi2, n1 ,n2 , alpha = 0.05){
 
 pi1 <- tb[1,1]/tb[1,3]
 pi2 <- tb[2,1]/tb[2,3]
-wald.dif(pi1 = pi2, pi2 = pi1, n2 = tb[1,3], n1 = tb[2,3])
-AgrestCaffo.dif(pi1 = pi2, pi2 = pi1, n2 = tb[1,3], n1 = tb[2,3])
+wald.dif(pi1 = pi1, pi2 = pi2, n2 = tb[1,3], n1 = tb[2,3])
+AgrestCaffo.dif(pi1 = pi1, pi2 = pi2, n2 = tb[1,3], n1 = tb[2,3])
 
 #Criação de tabela de contingência
 c.table <- array ( data = c(135,15, 434, 9) , dim = c(2 ,2) , 
@@ -155,13 +153,16 @@ round(OR.CI, 2)
 ##### Questão 17 ######
 ######################
 
-
+# Criação da tabela de contingência
 c.table <- array(data = c(118,155,93,51), dim = c(2,2),
                           dimnames = list( First = c("Outra lingua","Nativo"), Second = c("Engraçado","Não"))); c.table
 
 prop.table(c.table)
 
+#Teste chi square 
 prop.test(c.table)
+
+# P-valor(5,229e-05) caí dentro da área de rejeição de 16,363, indicando que há influência entre encontrar o humor na tira caso a sua primeira lingua seja inglês
 
 oddratio <- (c.table[1,1] * c.table[2,2]) / ( c.table[1,2] * c.table [2,1])
 
