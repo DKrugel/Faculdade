@@ -1,0 +1,225 @@
+---
+title: "Trabalho 2"
+author: "Daniel Krügel"
+date: "2022-12-11"
+output: pdf_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Questão 4
+
+#Análise descritiva da variável resposta
+
+```{r}
+#Carregando dados
+challenger <-  read.csv(file = "http://leg.ufpr.br/~lucambio/CE073/20222S/challenger.csv")
+
+#Fazendo um barplot para verificar a distribuição da variável resposta
+challenger %>% 
+  group_by(O.ring) %>% 
+  summarise(total = n()) %>% 
+  ggplot(aes(x = O.ring, y = total)) + 
+  geom_bar(stat = "identity")
+
+summary(challenger$O.ring) # Aquele summary para verificar se não há nenhum dado faltante 
+
+```
+
+Como O.ring é um dado de contagem imaginei que ele poderia fazer parte
+da família Poisson de distribuições generalizadas, observando o gráfico
+me pareceu a melhor escolha realmente.
+
+#Regressão
+
+Então ajustando o glm usando a função de ligação canônica, temos:
+
+```{r}
+ajuste <- glm(O.ring ~ Temp + Pressure, 
+              family = poisson(link = "log"),
+              data = challenger)
+
+coef(ajuste)
+```
+
+Então a forma linear da regressão logistica fica: e\^(3.533-0.0868 \*
+Temp+0.00795 \* Pressure)
+
+Mas será que as variáveis explicativas são significativas? Para
+responder vamos fazer uma tabela de variancia usando a função Anova do
+pacote cars, para que a entrada das covariáveis não altere a
+significancia delas.
+
+```{r echo=FALSE}
+car::Anova(ajuste, test = "LR")
+```
+
+Pressure não foi significante com um -2log(lambda) = 1.4041 e com um
+p-valor de P(A \> 1.4041) = 0.236. Enquanto Temp foi significativa porém
+a hipótese nula de que B_change = 0 não seria rejeitado caso meu nível
+de significância alpha fosse igual a 0.01.
+
+#A variável Pressure pode ser retirada?
+
+Para responder esta pergunta vamos fazer algumas análises, a primeira
+vamos ver se há alguma correlação entre elas ou se as variáveis são
+ortogonais:
+
+```{r}
+cor(challenger$Temp, challenger$Pressure)
+cor.test(challenger$Temp, challenger$Pressure,
+         alternative = c("two.sided"))
+```
+
+O teste pearson para correlação entre os dados deu que a correlação
+entre os dados é de aproximadamente 0.04 com um p valor de 0.8569, me
+não me fornecendo indicativos o suficiente para rejeitar a hipótese nula
+de que a cor entre Temp e Pressure é 0. Portanto não devemos ver
+resultados diferentes caso optemos por comparar modelos em que a entrada
+das covariáveis seja diferente ou na realização de um teste de análise
+das deviances de forma sequencial.
+
+```{r}
+anova(ajuste, test = "Chisq")
+
+ajuste.transposto <- glm(O.ring ~ Pressure + Temp, 
+                family = poisson(link = "log"),
+                data = challenger)
+
+anova(ajuste, ajuste.transposto) # A mudança entre a ordem de entrada não foi significativa
+
+ajuste.real  <- glm(O.ring ~ Temp, 
+                      family = poisson(link = "log"),
+                      data = challenger)
+
+anova(ajuste.real, ajuste, test = "Chisq") # A remoção do parâmetro não foi significativa a qualidade do ajuste
+```
+
+Sendo que o pvalor de P(A \> 1.4041) = 0.236 a adição da variável não é
+estatísticamente significativa a nenhum valor abaico de alpha = 0.05
+Portanto a escolha de permanecer com o modelo mais simples faz sentido.
+Claro que a base de dados tem apenas 23 observações, então caso o
+experimento seja refeito, com uma amostra maior possamos indentificar
+efeitos mais extremos que podem ter passado despercebidos e desenvolver
+um modelo mais preciso, porém com base neste experimento este é o modelo
+minimal para estre problema.
+
+##Questão 7
+
+```{r}
+# Carregando dados
+tb <-  read.csv ( file = "http://leg.ufpr.br/~lucambio/CE073/20222S/placekick.BW.csv")
+
+# Transformando eles em zero e um
+for(i in 1:length(tb$Good)){
+  if(tb$Good[i] == "Y"){
+    tb$Good[i] <- 1
+  }else{
+    tb$Good[i] <-0
+  }
+}
+ tb$Good <- as.numeric(tb$Good)
+ 
+ #Realizando o ajuste de modelo
+ ajuste7 <- glm(Good ~ Distance,
+                family = binomial(link = 'logit'), 
+                data = tb)
+summary(ajuste7)
+```
+
+Neste caso ajustando a fórmula Good \~ Distance utilizando a família
+binomial ( Já que a variável resposta é dicotômica ) usando a função de
+ligação logito podemos verificar se o R está modelando a probabilidade
+de sucesso ou de falha ao olhar na estimativa de Beta1, caso ela seja
+negativa estamos olhando para uma regressão modelando a probabilidade de
+FALHA, caso a estimativa seja positiva uma probabilidade de SUCESSO.
+
+Isto se dá pelo formato da curva sigmoidal gerada através da função de
+ligação, quando a estimativa Beta1 é negativa a curva é decrescente
+dando a entender que as probabilidades começam altas onde há um peso
+maior.
+
+#Curva sigmoide
+
+```{r}
+beta0 <- coef(ajuste7)[[1]]
+beta1 <- coef(ajuste7)[[2]]
+curve ( expr = exp( beta0 + beta1 *x) / (1+ exp( beta0 + beta1 *x)), xlim = c(0, 100) , 
+        col = " black ", main = expression (pi == frac (e ^{5.4092-0.1062* x[1]} , 1+e ^{5.4092-0.1062* x [1]}) ), 
+        xlab = expression (x [1]) , ylab = expression (pi))
+
+
+curve ( expr = exp( beta0 + beta1 *x) / (1+ exp( beta0 + beta1 *x)), xlim = c(0, 100) , 
+        col = " black ", main =  "Modelos sobrepostos", 
+        xlab = expression (x [1]) , ylab = expression (pi))
+curve ( expr = exp( 5.8121 - 0.1150 *x) / (1+ exp( 5.8121 - 0.1150 *x)), xlim = c(0, 100), col = 'red', ylab = "", xlab = "", add = TRUE)
+
+```
+
+Como ambos os estudos são parecidos analisando uma variável em função de
+outra e ambas idealmente seguem as mesmas distribuições de probabilidade
+na prática é como se os dados fornecidos no conjunto placekick.BW fossem
+uma repetição de um experimento. (Acredito que seja algo por este
+pensamento, meu conhecimento de futebol é bem fraco, não entendi a maior
+parte das variáveis).
+
+## Questão 19
+
+#Carregando os dados e reordenando os níveis
+
+```{r}
+#Carregando dados
+data  <-  read.csv(file = "http://leg.ufpr.br/~lucambio/ADC/healthcare_worker.csv") 
+
+#Reordenando os níveis dos grupos de ocupação para que a parcela de menor contato ser o grupo controle
+class(data$Occup.group)
+data$Occup.group <- as.factor(data$Occup.group)
+data$Occup.group <- relevel(data$Occup.group, ref = "No patient contact")
+levels(data$Occup.group)
+```
+
+ Ajuste
+
+```{r}
+#Ajustando o GLM da família Binomial com a funçào de ligação LOGITO
+ajuste19 <- glm(Hepatitis/Size ~ Occup.group, 
+                family = binomial(link = 'logit'),
+                weights = Size,
+                data = data)
+
+#Análise das deviances
+car::Anova(ajuste19)
+
+```
+
+Nenhum dos grupos foi significativo a um alpha de 0.05, vamos partir
+para uma análise das razões de chances para ver se realmente essa
+análise bate com o resultado.
+
+#Odds Ratio
+
+```{r}
+as.data.frame(exp(1*ajuste19$coefficients[1:5]))
+```
+
+Nenhuma das Odds Ratio apresenta um grande aumento, o mais destacado é o
+grupo responsável pelo manejamento de líquidos em laboratório.
+
+#Por que?
+
+Consultando o aluno Adam Domingues de Enfermagem da PUC e a aluna
+Eduarda Santini de Farmácia da UFPR e alguns dos motivos para que os
+grupos onde se foi estudado a contaminação de Hepatite C não serem
+significativos para o aumento da contaminação é de que a doença não tem
+vacina, ao contrário da variaçãoo B da doença que e obrigatória para
+agentes de saúde segundo o programa nacional de saúde (PNI), portanto há
+um cuidado muito grande para a prevenção com materiais de proteção. A
+exceção seria justamente nos laboratórios,que apresentam o maior risco
+de descuido e o maior número de ponto de falhas, o que explica a sua
+odds ratio ser levemente maior do que a dos outros grupos.
