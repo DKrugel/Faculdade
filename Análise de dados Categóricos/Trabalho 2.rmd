@@ -133,17 +133,8 @@ for(i in 1:length(tb$Good)){
 summary(ajuste7)
 ```
 
-Neste caso ajustando a fórmula Good \~ Distance utilizando a família
-binomial ( Já que a variável resposta é dicotômica ) usando a função de
-ligação logito podemos verificar se o R está modelando a probabilidade
-de sucesso ou de falha ao olhar na estimativa de Beta1, caso ela seja
-negativa estamos olhando para uma regressão modelando a probabilidade de
-FALHA, caso a estimativa seja positiva uma probabilidade de SUCESSO.
-
-Isto se dá pelo formato da curva sigmoidal gerada através da função de
-ligação, quando a estimativa Beta1 é negativa a curva é decrescente
-dando a entender que as probabilidades começam altas onde há um peso
-maior.
+Neste caso ajustando a fórmula Good ~ Distance utilizando a família
+binomial ( Já que a variável resposta é dicotômica ). O R neste caso está modelando a chance de sucesso. Por padrão ele vai sempre modelar considerando o nível mais alto da variável, como aqui transformei os "Y" em 1 e os "N" em 0 ele fará com que a resposta YES seja sucesso. Caso não tivesse feito isso deveria ter transformado elas em fatores e então utilizado a função relevel para definir qual seria a resposta de mais relevancia para o problema.
 
 #Curva sigmoide
 
@@ -195,6 +186,13 @@ ajuste19 <- glm(Hepatitis/Size ~ Occup.group,
 
 #Análise das deviances
 car::Anova(ajuste19)
+
+# Curva da regressão
+beta0 <- coef(ajuste22.prop)[[1]]
+beta1 <- coef(ajuste22.prop)[[2]]
+curve ( expr = exp( beta0 + beta1 *x) / (1+ exp( beta0 + beta1 *x)), xlim = c(0, 4) , 
+        col = " black ", 
+        xlab = expression (x [1]) , ylab = "kill/total")
 
 ```
 

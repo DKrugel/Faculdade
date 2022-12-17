@@ -183,7 +183,25 @@ anova(ajuste22, ajuste22.prop)
 
 ## A diferença entre os modelos não teve uma diferença significativa, portanto ambos os modelos são viáveis.
 
-predict(ajuste22.prop)
+
+beta0 <- coef(ajuste22.prop)[[1]]
+beta1 <- coef(ajuste22.prop)[[2]]
+curve ( expr = exp( beta0 + beta1 *x) / (1+ exp( beta0 + beta1 *x)), xlim = c(0, 4) , 
+        col = " black ", 
+        xlab = expression (x [1]) , ylab = "kill/total")
+
+
+root.func <- function (x, mod.fit.obj , pi0 , alpha ) { 
+  beta.hat <- mod.fit.obj$coefficients 
+  cov.mat <- vcov (mod.fit.obj)
+  var.den <- cov.mat [1 ,1] + x^2* cov.mat [2 ,2] + 2*x* cov.mat [1 ,2] 
+  abs ( beta.hat [1] + beta.hat [2]* x - log (pi0 /(1 - pi0))) /  sqrt ( var.den) - qnorm (1- alpha /2) } 
+
+lower <- uniroot (f = root.func , interval = c(min( picloram$picloram ), LD.x), mod.fit.obj = ajuste22 , pi0 = 0.9 , alpha = 0.95)
+lower # lower$root contains the lower bound 
+
+upper <- uniroot (f = root.func , interval = c(LD.x, max ( set1$picloram )), mod.fit.obj = mod.fit , pi0 = 0.9 , alpha = 0.95)
+upper # upper$root contains the upper bound
 
 
 x <- data.frame(seq(1,12, by = 1))
