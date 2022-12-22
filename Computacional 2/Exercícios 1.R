@@ -91,7 +91,7 @@ sim1 <- ger(0.5, 200)
 
 #A função diff faz cada elemento menos o anterior
 #A função Abs pego o absoluto dos elementos
-
+BN
 mean(abs(diff(sim1))) #Estimador de probabilidade de transição da função, sem nenhuma teoria estatística por trás
 
 est <- replicate(10000, p.est(0.3,200))
