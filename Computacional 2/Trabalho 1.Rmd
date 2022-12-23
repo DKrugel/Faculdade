@@ -1,0 +1,140 @@
+---
+title: "Trabalho 1"
+author: "Daniel Krügel"
+date: "2022-12-22"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(123)
+```
+
+## Introdução
+
+Este documento é para a realização do primeiro trabalho da disciplina CE 089 - Estatística computacional 2 realizada no período 2022.2
+
+## Questão 9
+
+```{r cars}
+ger_ex9 <- function(n = 10000){
+  # Função de probabilidade
+  f_x <- function(x, theta = 1){
+    exp(  -((x^2)/(2* (theta^2) * x ))/theta^2 )
+  }
+  M <- 2
+  x <- numeric(n)
+  i <- 1
+  k <- 1
+  
+  while(i <= n){
+    y <- rexp(1,rate = 0.5)
+    u <- runif(1)
+    ratio <- f_x(y)/(M * dexp(y,0.5))
+    if( u < ratio){
+      x[i] <- y
+      i <- i+1
+    }}
+  
+  return(x)
+
+}
+```
+
+Temos a inclusão da função de probabilidade obtida derivando a função densidade fornecida pelo professor.
+
+```{r}
+x <- ger_ex9()
+hist(x)
+plot(ecdf(x)) # Acumulada empírica.
+plot(density(x, from = 0, to = 10)) # Dens. empírica.
+```
+
+O valor de M foi escolhido apartir da seguinte análise gráfica:
+```{r, echo = FALSE}
+f_x <- function(x, theta = 1){
+  exp(  -((x^2)/(2* (theta^2) * x ))/theta^2 )
+}
+
+F_x <- function(x,theta = 1){
+  1-exp((-x^2)/2*theta^2 )
+}
+
+```
+
+
+```{r}
+curve(f_x(x),0,10)
+curve(2*dexp(x,0.5),0,10, col = "red", add = T)
+```
+
+## Questão 14
+
+Adicionando a Funçaõ densidade e a função de probabilidade ao R
+
+```{r}
+Fx14 <- function(x,theta1,theta2){
+  
+  1 - exp(-theta1 * exp(theta2*x))
+}
+
+fx14 <- function(x,theta = 1,pi = 2){
+  log(pi)*exp(( (-exp(pi^(pi*x) ) * theta) )+ pi ^ (pi*x)) * (pi ^((pi*x)+1)) * theta
+}
+```
+
+Criando a função que gerará os numeros através de amostragem por aceitação e rejeição:
+```{r}
+ger_ex14 <- function(n = 10000){
+  # Função de probabilidade
+  fx14 <- function(x,theta = 1,pi = 2){
+    log(pi)*exp(( (-exp(pi^(pi*x) ) * theta) )+ pi ^ (pi*x)) * (pi ^((pi*x)+1)) * theta
+  }
+  
+  M <- 2
+  x <- numeric(n)
+  i <- 1
+  k <- 1
+  
+  while(i <= n){
+    y <- rexp(1,rate = 10)
+    u <- runif(1)
+    ratio <- fx14(y,1,2)/(M * dexp(y,10))
+    if( u < ratio){
+      x[i] <- y
+      i <- i+1
+    }}
+  return(x)
+}
+
+```
+
+
+A função que envelopa a minha distribuição alvo foi escolhida apartir da seguinte análise gráfica:
+
+```{r}
+curve(fx14(x,1,2), from = 0, to = 4)
+curve(2*dexp(x, 10), col = 'red', add = T, from = 0, to = 4)
+```
+
+Olhando para os gráficos de histograma da distribuição temos os seguintes resultados:
+
+```{r}
+e14 <- ger_ex14()
+hist(e14)
+plot(ecdf(e14))
+```
+
+Provavelmente a distribuição escolhida não é a mais efetiva pois notei uma letidão ao rodar no meu computador, decidi testar o k/n para ver a proporção de rejeição e obtive o valor de 1.3285, o que representa uma rejeição extremamente alta, sendo recomendável procurar outro valor de M ou mesmo distribuição, porém vamos ao por que de eu entregar o trabalho desta forma:
+
+# Utilizando método da inversa
+
+```{r}
+x <- runif(100,0,1)
+iF14 <- function(u, theta1, theta2){
+  return(log(-log(1-u)/theta1)/theta2)
+}
+head(iF14(x,1,2))
+```
+
+Aplicando e invertendo a função me resultou em vários numeros negativos, o que não é suportado pela função dada, então optei pelo método de aceitação e rejeição pois apesar de apresentar dificuldades computacionais ela se mostrou melhor adequada dada as limitações da questão.
