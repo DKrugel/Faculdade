@@ -1,0 +1,79 @@
+---
+title: "Trabalho 3"
+author: "Daniel Krügel"
+date: "2023-01-19"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(hrbrthemes)
+```
+
+## Exercício 7
+
+```{r exercício 7 tabela de c., include=TRUE}
+#Carregando dados
+data <- read.csv(file = "http://leg.ufpr.br/~lucambio/ADC/healthcare_worker.csv")
+
+#Criando tabela de contingência
+c.table <- array(data = c(data[,2],(data[,3]-data[,2])),
+                 dim = c(5,2),
+                 dimnames = list(occupation = data[,1], Hepatite = c("+","-")))
+
+c.table
+```
+Incluí este chunk apenas para demonstrar como foi feita a tabela de contingência
+
+```{r exercício 7 testes, include=TRUE}
+#Teste qui quadrado de pearson
+chisq.test(c.table)
+
+#Teste LR
+vcd::assocstats(c.table)
+```
+
+Para este teste esperavamos ver um p-valor alto pois assim não teriamos dependencia entre o nível de exposição e a quantidade de casos de hepatite C, como foi demonstrado no exercício 19 do trabalho 2. No teste qui quadrado de pearson encontramos um p-valor de 0.342 muito elevado para o padrão ouro de p-valor de 0.05, portanto podemos assumir que existe independencia entre o nível de exposição ao paciente e a presença de Hepatite C.
+
+## Exercício 11
+# Questão a
+
+```{r}
+cereal = read.csv( file = "http://leg.ufpr.br/~lucambio/ADC/cereal_dillons.csv")
+head(cereal)
+
+stand01 <- function (x) { (x - min(x))/( max(x) - min(x)) }
+cereal2 <- data.frame (Shelf = cereal$Shelf, sugar = stand01 (x = cereal$sugar_g / cereal$size_g ), 
+                       fat = stand01 (x = cereal$fat_g / cereal$size_g ), 
+                       sodium = stand01 (x = cereal$sodium_mg / cereal$size_g ))
+
+VGAM::vglm(Shelf ~ sugar + fat + sodium, 
+           family = 'multinomial',
+           data = cereal2)
+```
+
+# Questão b
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+cerealb <- cereal2
+
+cerealb$Shelf <- as.factor(cerealb$Shelf)
+
+ggplot(cerealb, aes(x = Shelf, y = sugar)) + 
+  geom_boxplot() + 
+  geom_jitter(color = 'red', size = 0.4, alpha = 0.6) +
+  theme_ipsum()
+
+ggplot(cerealb, aes(x = Shelf, y = sodium)) + 
+  geom_boxplot() + 
+  geom_jitter(color = 'blue', size = 0.4, alpha = 0.6) +
+  theme_ipsum()
+
+ggplot(cerealb, aes(x = Shelf, y = fat)) + 
+  geom_boxplot() + 
+  geom_jitter(color = 'green', size = 0.4, alpha = 0.6) +
+  theme_ipsum()
+
+```
+
