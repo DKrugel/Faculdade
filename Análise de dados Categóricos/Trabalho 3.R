@@ -85,13 +85,22 @@ car::Anova(fit0)
 
 # As variáveis Sódio e Açúcar são as variáveis mais influentes para a variável Shelf
 
-fit1 <- nnet::multinom(formula = Shelf ~ sugar:fat:sodium,
-                            data = cereal2)
-summary(fit1)
-
-car::Anova(fit1)
-
 # e)
+
+fitAll <- nnet::multinom(formula = Shelf ~ sugar:fat:sodium,
+                            data = cereal2)
+
+car::Anova(fitAll)
+
+fitSugar <- nnet::multinom(Shelf ~ sugar:fat + sugar:sodium, data = cereal2)
+car::Anova(fitSugar)
+
+fitFat <- nnet::multinom(Shelf ~ fat:sugar + fat:sodium, data = cereal2)
+car::Anova(fitFat)
+
+fitSodium <-  nnet::multinom(Shelf ~ sodium:sugar + sodium:fat, data = cereal2)
+car::Anova(fitSodium)
+# f)
 
 kelloggs <- array(c(0.28,0.12,0.5),
                   dim = c(1,3))
@@ -119,5 +128,9 @@ round(1/exp(c.value[c(-1,-2)] * beta.hat),2)
 ### Exercício 20 ###
 ####################
 
+library(VGAM)
+pneumo
+help(pneumo)
 
-data <- read.csv(file = "http://www.ncbi.nlm.nih.gov/pubmedhealth/PMH0001187")
+wheat <- read.csv(file  = "http://leg.ufpr.br/~lucambio/ADC/wheat.csv", stringsAsFactors = TRUE)
+

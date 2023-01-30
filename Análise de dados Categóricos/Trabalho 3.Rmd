@@ -11,7 +11,7 @@ library(tidyverse)
 library(hrbrthemes)
 ```
 
-## Exercício 7
+# Exercício 7
 
 ```{r exercício 7 tabela de c., include=TRUE}
 #Carregando dados
@@ -36,8 +36,8 @@ vcd::assocstats(c.table)
 
 Para este teste esperavamos ver um p-valor alto pois assim não teriamos dependencia entre o nível de exposição e a quantidade de casos de hepatite C, como foi demonstrado no exercício 19 do trabalho 2. No teste qui quadrado de pearson encontramos um p-valor de 0.342 muito elevado para o padrão ouro de p-valor de 0.05, portanto podemos assumir que existe independencia entre o nível de exposição ao paciente e a presença de Hepatite C.
 
-## Exercício 11
-# Questão a
+# Exercício 11
+## Questão a
 
 ```{r}
 cereal = read.csv( file = "http://leg.ufpr.br/~lucambio/ADC/cereal_dillons.csv")
@@ -53,7 +53,7 @@ VGAM::vglm(Shelf ~ sugar + fat + sodium,
            data = cereal2)
 ```
 
-# Questão b
+## Questão b
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 cerealb <- cereal2
@@ -62,18 +62,81 @@ cerealb$Shelf <- as.factor(cerealb$Shelf)
 
 ggplot(cerealb, aes(x = Shelf, y = sugar)) + 
   geom_boxplot() + 
-  geom_jitter(color = 'red', size = 0.4, alpha = 0.6) +
-  theme_ipsum()
+  geom_jitter(color = 'red', size = 0.4, alpha = 0.6) 
 
 ggplot(cerealb, aes(x = Shelf, y = sodium)) + 
   geom_boxplot() + 
-  geom_jitter(color = 'blue', size = 0.4, alpha = 0.6) +
-  theme_ipsum()
+  geom_jitter(color = 'blue', size = 0.4, alpha = 0.6)
 
 ggplot(cerealb, aes(x = Shelf, y = fat)) + 
   geom_boxplot() + 
-  geom_jitter(color = 'green', size = 0.4, alpha = 0.6) +
-  theme_ipsum()
+  geom_jitter(color = 'green', size = 0.4, alpha = 0.6)
 
 ```
 
+## Questão c
+
+ Levariamos em conta a ordinalidade da variável Shelf no caso da posição de cada uma das prateleiras, assim colocando alimentos com mais açucar, sódio e gordura em prateleiras mais altas, para evitar que crianças as peguem com facilidade, por exemplo.
+ 
+ ## Questão d
+ 
+```{r}
+fit0 <- nnet::multinom(formula = Shelf ~ sugar + fat + sodium,
+               data = cereal2)
+
+summary(fit0)
+
+car::Anova(fit0)
+```
+ 
+As variáveis Sódio e Açúcar são as variáveis mais influentes para a variável Shelf
+
+## Questão e)
+
+```{r, echo=FALSE}
+# Ajustando os modelos
+fitAll <- nnet::multinom(formula = Shelf ~ sugar:fat:sodium,
+                            data = cereal2)
+fitSugar <- nnet::multinom(Shelf ~ sugar:fat + sugar:sodium, data = cereal2)
+fitFat <- nnet::multinom(Shelf ~ fat:sugar + fat:sodium, data = cereal2)
+fitSodium <-  nnet::multinom(Shelf ~ sodium:sugar + sodium:fat, data = cereal2)
+```
+
+Com todos os modelos ajustados vamos olhar para as Anovas e ver se há alguma interação das variáveis sendo relevantes.
+
+```{r}
+car::Anova(fitAll)
+car::Anova(fitSugar)
+car::Anova(fitFat)
+car::Anova(fitSodium)
+```
+
+Com as anovas em mãos vemos que a única interação que mostrou alguma significancia foi a de gordura em relação a açúcar, porém demonstrou em um nível de significânica de 90%.
+
+## Questão f)
+```{r}
+kelloggs <- array(c(0.28,0.12,0.5),
+                  dim = c(1,3))
+kelloggs <- as.data.frame(kelloggs)
+
+colnames(kelloggs) <- c("sugar","fat","sodium")
+
+pihat <- predict(object = fit0, 
+                 newdata = kelloggs, 
+                 type = "probs")
+```
+
+A uma probabilidade de 0.51 do cereal estar na prateleira 3 e de 0.48 na prateleira 4
+
+## Questão h)
+```{r}
+
+sd.cereal <- apply (X = cereal2, MARGIN = 2, FUN = sd)
+c.value <- c(1,sd.cereal)
+
+beta.hat <- coefficients(fit0)[1,2:4]
+round(1/exp(c.value[c(-1,-2)] * beta.hat),2)
+
+```
+
+O fator mais relevante para a explicação de qual prateleira o produto é colocado é a quantidade de sódio presente no cereal, tendo uma razão de chances de 55x

@@ -1,0 +1,37 @@
+---
+title: "Relatório Grupo 2 - Ensino"
+author: "Cristian Pessatti dos Anjos, Daniel Krügel, Maria Eduarda Moreira"
+date: "2023-01-26"
+output: pdf_document
+---
+
+## Introdução
+
+Com base nas ultimas ofertas de tutoria para Computacional I decidimos separar nosso relatório em quais dinâmicas já funcionam e como podemos acrescentar ao formato já proposto pelo PET - Estatística.
+
+# Pontos a manter
+
+## Diálogo
+
+Acreditamos que o diálogo entre os professores e o PET acrescentaram muito na dinâmica, trazendo quais pontos abordados em sala de aula foram pouco discutidos ou geraram dúvidas das quais não poderam ser sanadas em sala. 
+
+A proximidade do PET com os alunos engressos na matéria foi muito enriquecedora do ponto de vista prático. Um exemplo foi a aula de Markdown ofertada no dia 18/01/23 onde tanto o professor Paulo Justiniano Junior quanto alguns alunos em sala comentaram da necessidade de aprofundar o tema por conta de problemas técnicos em sala de aula.
+
+# Pontos a acrescentar
+
+## Relatório 
+
+Utilizando como referência a didática do professor Benito Olivares Aguilera propomos um relatório por parte do petiano para informarmos o professor do andamento da aula e qual a adesão dos alunos na tutoria, assim podemos avaliar quais as dúvidas mais frequentes e o próprio andamento da tutoria ao longo do semestre.
+
+## Fórum
+
+Pode ser útil utilizarmos as ferramentas desenvolvidas em tempos de pandemia para uma maior comunicação entre os alunos e o PET como a utilização dos fóruns do UFPR virtual e do Microsoft Teams, assim podemos tirar dúvidas dos alunos de forma mais dinâmica e com mais velocidade.
+
+## Divulgação
+
+Precisamos ter certeza de que os alunos saibam do nosso projeto, portanto propomos além da divulgação em sala de aula uma parceria com a equipe de comunicação para incluirmos a tutoria e temas na agenda da semana nas redes do PET e em conjunto com o fórum fazer posts nas áreas de aviso do UFPR Virtual para disparar emails para a turma toda avisando de horários e local das aulas.
+
+## Cheat-Sheet
+
+Para aumentar a adesão dos alunos e incentivar os alunos a frequentar as tutorias propomos a criação de um material em forma de resumos no estilo dos cheat-sheets disponíveis para os pacotes do tidyverse no R com informações importantes de forma rápida para os alunos.
+
