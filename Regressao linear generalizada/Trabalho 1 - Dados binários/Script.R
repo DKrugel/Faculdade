@@ -45,7 +45,7 @@ casados <- dados %>% filter(Class == 0)
  
  ggcorr(casados, method = c("everything","pearson"))
  
-# ajustando modelo (Família Gaussiana) Antes de transformar para fatores
+-# ajustando modelo (Família Gaussiana) Antes de transformar para fatores+
  
 fit <- glm(formula = Class ~.,
            data = dados)
@@ -85,6 +85,27 @@ fit.Bin.ridge <- glmnet(Class ~.,
 
 fit.bin.ridge.mod <- step(fit.Bin, direction = "both")
 
+summary(fit.Bin)
+
 car::Anova(fit.bin.ridge.mod, fit.bin.lasso.mod)
 
 summary(fit.bin.mod)
+
+#####################################
+# Remover algumas perguntar para diminuir a correlação do modelo
+
+dados2<- dados[,c(1,4,5,7,9,13,14,18,23,27,31,32,35,39,42,48,54,55)]
+
+fit2 <- glm(formula = Class ~.,
+            family = binomial(link = 'logit'),
+           data = dados2)
+
+summary(fit2)
+
+
+dados3<- dados[,c(1,4,7,9,13,18,23,27,31,32,39,42,54,55)]
+
+
+fit3 <- glm(formula = Class ~.,
+            family = binomial(link = 'logit'),
+            data = dados3)

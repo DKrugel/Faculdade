@@ -132,5 +132,21 @@ library(VGAM)
 pneumo
 help(pneumo)
 
-wheat <- read.csv(file  = "http://leg.ufpr.br/~lucambio/ADC/wheat.csv", stringsAsFactors = TRUE)
+data.20 <- pivot_longer(pneumo, c(normal, mild, severe))
+data.20$name <- as.factor(data.20$name)
+data.20$exposure.time <- as.factor(data.20$exposure.time)
 
+levels(data.20$name)
+data.20$name <- relevel(data.20$name, "normal")
+
+library(nnet)
+fit.20 <- multinom(formula = name ~ exposure.time,
+                   weights = value,
+                     data = data.20)
+
+summary(fit.20)
+car::Anova(fit.20)
+
+predição <- data.frame(c(5,10,15,20,25))
+colnames(predição) <- c("exposure.time")
+predict(fit.20, newdata = predição)

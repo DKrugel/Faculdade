@@ -140,3 +140,45 @@ round(1/exp(c.value[c(-1,-2)] * beta.hat),2)
 ```
 
 O fator mais relevante para a explicação de qual prateleira o produto é colocado é a quantidade de sódio presente no cereal, tendo uma razão de chances de 55x
+
+# Questão 20
+
+```{r, echo=FALSE}
+
+library(VGAM)
+data.20 <- pivot_longer(pneumo, c(normal, mild, severe))
+data.20$name <- as.factor(data.20$name)
+#data.20$exposure.time <- as.factor(data.20$exposure.time)
+levels(data.20$name)
+data.20$name <- relevel(data.20$name, "normal")
+```
+```{r}
+
+head(data.20)
+```
+
+
+Tentei ajustar primeiramente a variável explicativa exposure.time como fator pois era me pareceu lógico porém ao fazer a predição realizei que tinha me equivocado porém decidi apenas comentar o código feito para deixar registrado.
+
+```{r, echo = FALSE}
+
+library(nnet)
+fit.20 <- multinom(formula = name ~ exposure.time,
+                   weights = value,
+                     data = data.20)
+```
+```{r}
+car::Anova(fit.20)
+```
+
+Aqui vemos que conseguimos convergir um modelo utilizando uma regressão multinomial com a quantidade de casos sendo usados como pesos para balancear a variável explicativa que é o tempo passado nas minas de carvão.
+
+Para realizar o predict precisamos criar um dataframe com os valores sugeridos de se fazer a análise
+
+```{r}
+predição <- data.frame(c(5,10,15,20,25))
+colnames(predição) <- c("exposure.time")
+predict(fit.20, newdata = predição)
+```
+
+Em todos os casos a predição utilizando o modelo ajustado anteriormente dão como resultado mais provável que seja desenvolvido casos considerados normais.
