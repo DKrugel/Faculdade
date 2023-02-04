@@ -1,0 +1,110 @@
+```{r include=FALSE}
+set.seed(5050)
+```
+
+
+## Análise descritiva
+
+No gráfico a seguir podemos ver a distribuição das respostas dadas ao questionário aplicado aos casais
+
+```{r distribuicao, echo=FALSE}
+# Distribuição das respostas
+total <- count(dados,dados[,1])
+
+for(i in 2:53){
+  part <- count(dados,dados[,i])
+  total[,2] <-total[,2] + part[,2]
+}
+colnames(total) <- c('respostas','n')
+
+total %>% 
+  ggplot(aes(x = respostas, y = n)) + 
+  geom_bar(stat = 'identity')
+```
+
+E no seguinte podemos ver o balanceamento das respostas
+
+```{r balanceamentp, echo = FALSE}
+# Balanceamento da variável resposta
+ggplot(dados, aes(x = as.factor(Class))) + 
+  geom_bar() +
+  xlab('Divórcio') +
+  ylab('Quantidade')
+```
+
+Como já descrito anteriormente a base de dados sofre de um problema crônico de multicolinearidade, portando separamos os dados em duas categorias, com a resposta 1 (ou seja, se divorciou ao final do estudo), resposta 0 (Continuou casado) para criar os correlogramas e identificar se há uma diferença entre as correlações das variáveis explicativas dependendo da resposta.
+
+```{r correlacao separada, echo=FALSE, warning=FALSE, fig.show='hold'}
+#Correlação entre as variáveis separadas pelo divórcio ou não
+divorciados <- correlacao %>% filter(Class == 1)
+
+casados <- correlacao %>% filter(Class == 0)
+par(mfrow = c(1,2))
+ ggcorr(divorciados, method = c("everything","pearson"), name ='Divorciados')
+ 
+ ggcorr(casados, method = c("everything","pearson", name = 'Casados'))
+```
+
+Como podemos ver quando o casal ao final do estudo apresenta uma correlação predominantemente positiva, possívelmente foi utilizado este fato para a predição utilizando um modelo de aprendizado de máquina. Porém como estamos tratando da base como um todo vamos fazer também o correlograma de todos os dados em conjunto.
+
+```{r correlacao conjunta, echo=FALSE}
+ggcorr(correlacao[,-55], method = c('everything','pearson', name = "Ambos"))
+```
+
+Aqui podemos ver claramente que teremos problemas ao tentar ajustar um modelo linear com todas as variáveis explicativas.
+
+## Modelagem
+
+Para questões ilustrativas o ajuste inicial com todas as covariáveis fica da seguinte forma:
+
+```{r modelo inicial, echo=TRUE, warning=FALSE}
+fitZero <- glm(formula = Class ~.,
+           family = binomial(link = 'logit'),
+           data = dados)
+```
+
+Como a criação do modelo criou vários avisos diversos separamos o aviso com maior perigo, no caso:
+
+```{r fitZero converg, echo=TRUE}
+fitZero$converged
+```
+
+Resultando em além de vários Betas estimados iguais a NA vários outros com probabilidade de ocorrência igual a 1, não tendo nenhum coeficiente sendo estatísticamente significativo ao modelo.
+
+Portanto seguiremos com a técnica de regressão Lasso, para separar as variáveis significativas e punir o modelo pela incrementação de correlação. As regressões Ridge e Elastic-net foram ajustadas porém como não apresentaram melhora significativa no ajuste, não serão incluídas neste trabalho.
+
+```{r lasso inicial, echo = TRUE}
+x <- model.matrix(Class ~., data = dados)[,-1]; y <- dados$Class
+
+fit.lasso <- glmnet(x, y, 
+                    family = binomial(link = 'logit'), 
+                    alpha = 1)
+
+plot(fit.lasso,
+     las = 1, 
+     lwd = 2, label=TRUE)
+```
+
+Com uma quantidade tão grande de variáveis fica extremamente difícil de retirar uma informação deste gráfico poluído então em seguida vamos escolher o lambda ótimo para minimizar a soma de quadrados utilizando a função "cv.glmnet".
+```{r cvfit, echo=TRUE}
+cvfit <- cv.glmnet(x, y, family = 'binomial', alpha = 1, nfolds = 17) 
+plot(cvfit)
+```
+
+A seleção de folds para a validação cruzada foi de 17, para ser múltiplo da quantidade de amostras disponíveis mas não tão grande para que se reduzisse muito o número de iterações possíveis. O valor retornado pelo objeto cvfit$lamda.min foi de 0.01557972 e será utilizado dentro do glmnet para uma melhor adaptação do modelo.
+
+```{r lasso com lambda, echo= TRUE}
+fit.lasso.final <- glmnet(x, y, 
+                          family = binomial(link = 'logit'), 
+                          alpha = 1, 
+                          lambda = cvfit$lambda.min)
+```
+
+Os coeficientes finais do ajuste ficaram como:
+
+```{r, encho = FALSE}
+coeficientes <- as.matrix(coef(fit.lasso.final))
+coeficientes[which(coeficientes != 0),]
+```
+
+Como a qualidade de ajuste para regressões Lasso requerem habilidades computacionais fora do escopo da matéria encerraremos com este modelo o trabalho.

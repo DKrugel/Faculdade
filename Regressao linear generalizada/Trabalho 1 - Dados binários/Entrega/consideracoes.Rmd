@@ -1,0 +1,1 @@
+O primeiro trabalho de regressão linear generalizada nos ajudou a desenvolver melhor nossas percepções quanto a aplicações desses modelos e a explorar os limites da regressão quanto a efeitos de multicolinearidade e como encontrar métodos para contornar o problema. 

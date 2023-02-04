@@ -134,7 +134,7 @@ help(pneumo)
 
 data.20 <- pivot_longer(pneumo, c(normal, mild, severe))
 data.20$name <- as.factor(data.20$name)
-data.20$exposure.time <- as.factor(data.20$exposure.time)
+#data.20$exposure.time <- as.factor(data.20$exposure.time)
 
 levels(data.20$name)
 data.20$name <- relevel(data.20$name, "normal")

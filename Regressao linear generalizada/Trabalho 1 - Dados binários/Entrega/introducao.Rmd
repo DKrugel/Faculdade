@@ -1,0 +1,7 @@
+
+
+O trabalho consiste em ajustar um modelo de regressão linear generalizada com resposta binária em um conjunto de dados retirado do site UCI Machine Learning Repository, no caso deste projeto foi escolhido o data set Divorce Predictors.
+
+Este dataset foi utilizado para predizer caso um casal irá ou não se divorciar ao final da terapia de casal aplicando um questionário de 54 questões, que variam desde conhecimento de hábitos e gostos até como eles se comportam durante as brigas. 
+
+Inicialmente a idéia era utilizar algoritmos de máquina como redes neurais, a utilização do método de regressão linear com família binomial e link logito não convergiu para um modelo conciso portanto foi necessário utilizar algum método de penalização, portanto a regressão Lasso foi escolhida como método de regularização. 

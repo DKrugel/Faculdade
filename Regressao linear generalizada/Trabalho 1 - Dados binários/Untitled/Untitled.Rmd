@@ -1,0 +1,82 @@
+---
+title: Trabalho 1 - Regressão linear generalizada para dados binários
+author1: Caio Gomes Alves
+author2: Daniel Krügel
+advisor: César Augusto Taconeli
+year: 2023
+dedicatoria: |
+  `r if(knitr:::is_latex_output()) paste(readLines("dedicatoria.Rmd"),
+  collapse = '\n  ')`
+thanks: |
+  `r if(knitr:::is_latex_output()) paste(readLines("agradecimentos.Rmd"),
+  collapse = '\n  ')`
+epigrafe: |
+  `r if(knitr:::is_latex_output()) paste(readLines("epigrafe.Rmd"),
+  collapse = '\n  ')`
+resumo: |
+  `r if(knitr:::is_latex_output()) paste(readLines("resumo.Rmd"),
+  collapse = '\n  ')`
+palavras-chave: [Regressão linear generalizada, Regressão lasso]
+output: tcctemplate::tcc_template
+---
+
+
+```{r setup, include=FALSE}
+library(xtable)
+## Opções comuns utilizadas em todas as tabelas usando xtable
+options(xtable.caption.placement = "top",
+        xtable.include.rownames = FALSE,
+        xtable.comment = FALSE)
+## Opções comuns para o knitr
+knitr::opts_chunk$set(echo = FALSE,
+                      out.width = "80%",
+                      fig.align = "center")
+```
+
+# Introdução
+\bigskip
+
+```{r, child="introducao.Rmd"}
+```
+
+# Revisão de Literaura
+\bigskip
+
+```{r, child="revisao.Rmd"}
+```
+
+# Material e Métodos
+\bigskip
+
+```{r, child="metodologia.Rmd"}
+```
+
+# Resultados e Discussão
+\bigskip
+
+```{r, child="resultados.Rmd"}
+```
+
+# Considerações Finais
+\bigskip
+
+```{r, child="consideracoes.Rmd"}
+```
+
+```{r, echo=FALSE}
+## Se houverem apêndices ou anexos, coloque aqui como TRUE e veja os
+## chinks a seguir
+apendice <- FALSE
+anexo <- FALSE
+```
+
+\setlength{\afterchapskip}{\baselineskip}
+\bibliography{bib/ref.bib}
+
+\postextual
+
+```{r, child=if(apendice) "apendice01.Rmd"}
+```
+
+```{r, child=if(anexo) "anexo01.Rmd"}
+```
