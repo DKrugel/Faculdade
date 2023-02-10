@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.2.3)  4 FEB 2023 16:56
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.2.3)  6 FEB 2023 18:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -921,58 +921,44 @@ l.196
 
 ] [2
 
-] [3
-
+] (./Entrega.toc) [3
 
 ] [4
 
+
 ] [5
 
-] (./Entrega.toc) [6
-
-] [7
-
-
 ]
-
-LaTeX Warning: Citation `GLM' on page 8 undefined on input line 297.
-
-
-LaTeX Warning: Citation `Lasso' on page 8 undefined on input line 297.
-
-[8
-
-]
-<Entrega_files/figure-latex/distribuicao-1.pdf, id=90, 710.655pt x 495.8525pt>
+<Entrega_files/figure-latex/distribuicao-1.pdf, id=70, 710.655pt x 495.8525pt>
 File: Entrega_files/figure-latex/distribuicao-1.pdf Graphic file (type pdf)
 <use Entrega_files/figure-latex/distribuicao-1.pdf>
-Package pdftex.def Info: Entrega_files/figure-latex/distribuicao-1.pdf  used on input line 315.
+Package pdftex.def Info: Entrega_files/figure-latex/distribuicao-1.pdf  used on input line 293.
 (pdftex.def)             Requested size: 364.00139pt x 253.98607pt.
-<Entrega_files/figure-latex/balanceamentp-1.pdf, id=91, 712.6625pt x 493.845pt>
+<Entrega_files/figure-latex/balanceamentp-1.pdf, id=71, 712.6625pt x 493.845pt>
 File: Entrega_files/figure-latex/balanceamentp-1.pdf Graphic file (type pdf)
 <use Entrega_files/figure-latex/balanceamentp-1.pdf>
-Package pdftex.def Info: Entrega_files/figure-latex/balanceamentp-1.pdf  used on input line 319.
+Package pdftex.def Info: Entrega_files/figure-latex/balanceamentp-1.pdf  used on input line 297.
 (pdftex.def)             Requested size: 364.00139pt x 252.23438pt.
-[9
+[6
 
  <./Entrega_files/figure-latex/distribuicao-1.pdf> <./Entrega_files/figure-latex/balanceamentp-1.pdf>]
-<Entrega_files/figure-latex/correlacao separada-1.pdf, id=111, 559.08875pt x 493.845pt>
+<Entrega_files/figure-latex/correlacao separada-1.pdf, id=92, 559.08875pt x 493.845pt>
 File: Entrega_files/figure-latex/correlacao separada-1.pdf Graphic file (type pdf)
 <use Entrega_files/figure-latex/correlacao separada-1.pdf>
-Package pdftex.def Info: Entrega_files/figure-latex/correlacao separada-1.pdf  used on input line 323.
+Package pdftex.def Info: Entrega_files/figure-latex/correlacao separada-1.pdf  used on input line 301.
 (pdftex.def)             Requested size: 364.00139pt x 321.53046pt.
-<Entrega_files/figure-latex/correlacao separada-2.pdf, id=112, 552.0625pt x 493.845pt>
+<Entrega_files/figure-latex/correlacao separada-2.pdf, id=93, 552.0625pt x 493.845pt>
 File: Entrega_files/figure-latex/correlacao separada-2.pdf Graphic file (type pdf)
 <use Entrega_files/figure-latex/correlacao separada-2.pdf>
-Package pdftex.def Info: Entrega_files/figure-latex/correlacao separada-2.pdf  used on input line 323.
+Package pdftex.def Info: Entrega_files/figure-latex/correlacao separada-2.pdf  used on input line 301.
 (pdftex.def)             Requested size: 364.00139pt x 325.62975pt.
-[10 <./Entrega_files/figure-latex/correlacao separada-1.pdf> <./Entrega_files/figure-latex/correlacao separada-2.pdf>]
-<Entrega_files/figure-latex/correlacao conjunta-1.pdf, id=133, 552.0625pt x 493.845pt>
+[7 <./Entrega_files/figure-latex/correlacao separada-1.pdf> <./Entrega_files/figure-latex/correlacao separada-2.pdf>]
+<Entrega_files/figure-latex/correlacao conjunta-1.pdf, id=114, 552.0625pt x 493.845pt>
 File: Entrega_files/figure-latex/correlacao conjunta-1.pdf Graphic file (type pdf)
 <use Entrega_files/figure-latex/correlacao conjunta-1.pdf>
-Package pdftex.def Info: Entrega_files/figure-latex/correlacao conjunta-1.pdf  used on input line 327.
+Package pdftex.def Info: Entrega_files/figure-latex/correlacao conjunta-1.pdf  used on input line 305.
 (pdftex.def)             Requested size: 364.00139pt x 325.62975pt.
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 337.
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 315.
 (/home/krugel/.TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
@@ -980,7 +966,7 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `lmtt' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
-LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 339.
+LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 317.
 (/home/krugel/.TinyTeX/texmf-dist/tex/latex/lm/ts1lmtt.fd
 File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
@@ -991,82 +977,78 @@ Package microtype Info: Loading generic protrusion settings for font family
 Package microtype Info: Character `texttrademark ' is missing
 (microtype)             in font `TS1/lmtt/m/n/12'.
 (microtype)             Ignoring protrusion settings for this character.
-[11 <./Entrega_files/figure-latex/correlacao conjunta-1.pdf>]
-<Entrega_files/figure-latex/lasso inicial-1.pdf, id=149, 689.57625pt x 454.69875pt>
+[8 <./Entrega_files/figure-latex/correlacao conjunta-1.pdf>]
+<Entrega_files/figure-latex/lasso inicial-1.pdf, id=130, 689.57625pt x 454.69875pt>
 File: Entrega_files/figure-latex/lasso inicial-1.pdf Graphic file (type pdf)
 <use Entrega_files/figure-latex/lasso inicial-1.pdf>
-Package pdftex.def Info: Entrega_files/figure-latex/lasso inicial-1.pdf  used on input line 374.
+Package pdftex.def Info: Entrega_files/figure-latex/lasso inicial-1.pdf  used on input line 352.
 (pdftex.def)             Requested size: 364.00139pt x 240.01784pt.
-[12 <./Entrega_files/figure-latex/lasso inicial-1.pdf>]
-<Entrega_files/figure-latex/cvfit-1.pdf, id=163, 689.57625pt x 454.69875pt>
+[9 <./Entrega_files/figure-latex/lasso inicial-1.pdf>]
+<Entrega_files/figure-latex/cvfit-1.pdf, id=142, 689.57625pt x 454.69875pt>
 File: Entrega_files/figure-latex/cvfit-1.pdf Graphic file (type pdf)
 <use Entrega_files/figure-latex/cvfit-1.pdf>
-Package pdftex.def Info: Entrega_files/figure-latex/cvfit-1.pdf  used on input line 385.
+Package pdftex.def Info: Entrega_files/figure-latex/cvfit-1.pdf  used on input line 363.
 (pdftex.def)             Requested size: 364.00139pt x 240.01784pt.
 
-Overfull \hbox (1.64148pt too wide) in paragraph at lines 401--401
+Overfull \hbox (1.64148pt too wide) in paragraph at lines 379--379
 []\T1/lmtt/m/n/12 ## (Intercept)       Atr12       Atr24       Atr34       Atr51       Atr74[] 
  []
 
 
-Overfull \hbox (1.58545pt too wide) in paragraph at lines 402--402
+Overfull \hbox (1.58545pt too wide) in paragraph at lines 380--380
 []\T1/lmtt/m/n/12 ## -3.24827648  0.12193167  0.38698120  0.10541674  0.30825781  0.67433931[] 
  []
 
 
-Overfull \hbox (1.62747pt too wide) in paragraph at lines 403--403
+Overfull \hbox (1.62747pt too wide) in paragraph at lines 381--381
 []\T1/lmtt/m/n/12 ##       Atr84       Atr92       Atr93      Atr103      Atr113      Atr114[] 
  []
 
 
-Overfull \hbox (1.57144pt too wide) in paragraph at lines 404--404
+Overfull \hbox (1.57144pt too wide) in paragraph at lines 382--382
 []\T1/lmtt/m/n/12 ##  0.20929996  0.10093715  0.04338780  0.31795723  2.07709680  1.25492171[] 
  []
 
 
-Overfull \hbox (1.61346pt too wide) in paragraph at lines 405--405
+Overfull \hbox (1.61346pt too wide) in paragraph at lines 383--383
 []\T1/lmtt/m/n/12 ##      Atr183      Atr192      Atr193      Atr201      Atr262      Atr361[] 
  []
 
 
-Overfull \hbox (1.88019pt too wide) in paragraph at lines 406--406
+Overfull \hbox (1.88019pt too wide) in paragraph at lines 384--384
 []\T1/lmtt/m/n/12 ##  1.00200691  0.79484213  0.03292979  0.33537569  2.02803013  0.34902493[] 
  []
 
 
-Overfull \hbox (1.92921pt too wide) in paragraph at lines 407--407
+Overfull \hbox (1.92921pt too wide) in paragraph at lines 385--385
 []\T1/lmtt/m/n/12 ##      Atr373      Atr391      Atr393      Atr394      Atr402      Atr403[] 
  []
 
 
-Overfull \hbox (1.88719pt too wide) in paragraph at lines 408--408
+Overfull \hbox (1.88719pt too wide) in paragraph at lines 386--386
 []\T1/lmtt/m/n/12 ##  0.07931621 -0.13032455  0.06709633  1.01809968  1.07417525  3.14162322[] 
  []
 
-[13 <./Entrega_files/figure-latex/cvfit-1.pdf>] [14] [15
+[10 <./Entrega_files/figure-latex/cvfit-1.pdf>] [11] [12
 
 ]
 \tf@toc=\write5
 \openout5 = `Entrega.toc'.
 
-(./Entrega.aux)
-
-LaTeX Warning: There were undefined references.
-
- ) 
+(./Entrega.aux) ) 
 Here is how much of TeX's memory you used:
- 20769 strings out of 478006
- 341183 string characters out of 5839336
+ 20746 strings out of 478006
+ 340957 string characters out of 5839336
  1861346 words of memory out of 5000000
- 40463 multiletter control sequences out of 15000+600000
- 564575 words of font info for 112 fonts, out of 8000000 for 9000
+ 40456 multiletter control sequences out of 15000+600000
+ 564296 words of font info for 109 fonts, out of 8000000 for 9000
  16 hyphenation exceptions out of 8191
  90i,12n,90p,1004b,643s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/home/krugel/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/home/krugel/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/home/krugel/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/home/krugel/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/home/krugel/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/home/krugel/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}</home/krugel/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></home/krugel/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb></home/krugel/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi12.pfb></home/krugel/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></home/krugel/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></home/krugel/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></home/krugel/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></home/krugel/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmss12.pfb></home/krugel/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmss17.pfb></home/krugel/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmssbx10.pfb></home/krugel/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></home/krugel/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></home/krugel/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt12.pfb>
-Output written on Entrega.pdf (16 pages, 323013 bytes).
+Output written on Entrega.pdf (13 pages, 320346 bytes).
 PDF statistics:
- 306 PDF objects out of 1000 (max. 8388607)
- 233 compressed objects within 3 object streams
- 46 named destinations out of 1000 (max. 500000)
- 31892 words of extra memory for PDF output out of 35830 (max. 10000000)
+ 274 PDF objects out of 1000 (max. 8388607)
+ 204 compressed objects within 3 object streams
+ 36 named destinations out of 1000 (max. 500000)
+ 31868 words of extra memory for PDF output out of 35830 (max. 10000000)
 

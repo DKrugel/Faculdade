@@ -42,13 +42,13 @@ casados <- correlacao %>% filter(Class == 0)
 par(mfrow = c(1,2))
  ggcorr(divorciados, method = c("everything","pearson"), name ='Divorciados')
  
- ggcorr(casados, method = c("everything","pearson", name = 'Casados'))
+ ggcorr(casados, method = c("everything","pearson"), name = 'Casados')
 ```
 
 Como podemos ver quando o casal ao final do estudo apresenta uma correlação predominantemente positiva, possívelmente foi utilizado este fato para a predição utilizando um modelo de aprendizado de máquina. Porém como estamos tratando da base como um todo vamos fazer também o correlograma de todos os dados em conjunto.
 
 ```{r correlacao conjunta, echo=FALSE}
-ggcorr(correlacao[,-55], method = c('everything','pearson', name = "Ambos"))
+ggcorr(correlacao[,-55], method = c('everything','pearson'), name = "Ambos")
 ```
 
 Aqui podemos ver claramente que teremos problemas ao tentar ajustar um modelo linear com todas as variáveis explicativas.

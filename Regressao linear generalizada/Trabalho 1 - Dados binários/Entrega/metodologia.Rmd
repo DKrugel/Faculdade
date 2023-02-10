@@ -18,11 +18,11 @@ xtable(dados[1:5,c(1,5,30,55)], caption =
 
 ## Métodos
 
-Os métodos utilizados neste trabalho foram os modelos de regressão linear generalizada \cite{GLM}, visualizações de correlação e métodos de regularização como a regressão lasso \cite{Lasso}.
+Os métodos utilizados neste trabalho foram os modelos de regressão linear generalizada, visualizações de correlação e métodos de regularização como a regressão lasso.
 
 $$
 -(1/n) \sum |(y_i \beta_0  + x' _i\beta) + \lambda[(1-\alpha)||\beta||_2+ \alpha||\beta||_i]
 $$
 
-Onde neste contexto $$ \alpha = 1$$ para intensificarmos a penalização e selecionarmos algumas das variáveis mais importantes .
+Onde neste contexto $$ \alpha = 1$$ assim intensificamos a penalização e selecionarmos algumas das variáveis mais importantes.
 
