@@ -23,7 +23,7 @@ Anova(fit1)
 
 quart <- summary(starbucks$Count)
 
-exp(fit1$coefficients[1] + quart[3]*fit1$coefficients[2:5])
+exp(fit1$coefficients[1] + quart[4]*fit1$coefficients[2:5])
 exp(fit1$coefficients[2] + quart[3]*fit1$coefficients[which(fit1$coefficients!=fit1$coefficients[2])])
 
 quart[3]*fit1$coefficients[1:5]
