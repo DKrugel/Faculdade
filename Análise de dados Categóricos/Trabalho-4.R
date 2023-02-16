@@ -19,14 +19,14 @@ fit1 <- glm(Count ~ Day,
             data = starbucks)
 
 summary(fit1)
-Anova(fit1)
-
+nova <- Anova(fit1)
+nova[,3]
 quart <- summary(starbucks$Count)
 
-exp(fit1$coefficients[1] + quart[3]*fit1$coefficients[2:5])
+exp(fit1$coefficients[1] + quart[4]*fit1$coefficients[2:5])
 exp(fit1$coefficients[2] + quart[3]*fit1$coefficients[which(fit1$coefficients!=fit1$coefficients[2])])
 
-quart[3]*fit1$coefficients[1:5]
+quart[4]*fit1$coefficients[1:5]
 
 starbucks %>% 
   group_by(Day) %>% 

@@ -1,0 +1,126 @@
+---
+title: "Trabalho 4"
+author: "Daniel Krügel"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(highcharter)
+library(hrbrthemes)
+library(car)
+library(mcprofile)
+library(xtable)
+```
+
+# Questão 13
+
+## a)
+
+A população de inferência é a população que frequenta o starbucks no período das 8:00 até as 8:30, a amostra foi quem frequenta o starbucks de Lincoln, NE.
+
+## b)
+
+```{r, include = F}
+starbucks = read.csv( file = "http://leg.ufpr.br/~lucambio/ADC/starbucks.csv" )
+
+```
+
+```{r gráfico}
+starbucks$Day <- factor(starbucks$Day, 
+                        levels = c('Monday',"Tuesday","Wednesday","Thursday","Friday"))
+
+starbucks %>% 
+  ggplot(aes(x = Day, y = Count)) +
+  geom_bar(stat = "identity") +
+  theme_ipsum(base_family = )
+
+```
+
+## c)
+
+```{r modelo }
+fit1 <- glm(Count ~ Day, 
+            family = poisson(link='log'),
+            data = starbucks)
+```
+
+```{r sumário, echo=FALSE}
+xtable(fit1)
+```
+
+## I)
+
+Lembrando que usamos a função de ligação log, então para conseguir as estimativas diárias precisamos passar um exponencial nos coeficientes.
+
+```{r exp coef, echo=FALSE}
+xtable(as.data.frame(exp(
+  coef(fit1)
+  ),
+  row.names = c('Segunda','Terça','Quarta','Quinta','Sexta')
+  ))
+```
+
+Aqui o intercepto equivale a segunda feira.
+
+## II)
+
+```{r Anova Aparente}
+Anova(fit1)
+```
+
+```{r Anova silenciosa, include=FALSE}
+nova <- Anova(fit1)
+```
+
+O Teste LR demonstrou que a variável `Day` é relevante para a contagem de pessoas presentes no Starbucks com um P-valor de `r nova[,3]`
+
+## III)
+
+## IV)
+
+Aqui temos a média estimada para cada dia da semana
+
+```{r média estimada}
+quart <- summary(starbucks$Count)
+quart[4]*fit1$coefficients[1:5]
+```
+
+E aqui vemos a média observada em cada dia da semana
+
+```{r média observada}
+starbucks %>% 
+  group_by(Day) %>% 
+  reframe(total = mean(Count))
+```
+
+Os intervalos de confiança para a média de cada dia da semana:
+
+```{r Intervalo de confianca}
+K <- matrix(data = c(1*quart[4], 0, 0, 0, 0,
+                     0, 1*quart[4], 0, 0, 0,
+                     0, 0, 1*quart[4], 0, 0,
+                     0, 0, 0, 1*quart[4], 0,
+                     0, 0, 0, 0, 1*quart[4]), nrow = 5, ncol = 5, byrow = TRUE)
+linear.combo <- mcprofile(object = fit1, CM = K)
+ci.beta <- confint(object = linear.combo, level = 0.95)
+Estimativas <- ci.beta$confint
+rownames(Estimativas) <- c("Segunda","Terça","Quarta","Quinta","Sexta")
+Estimativas
+```
+
+## d)
+
+Ambas as formas de escrita do teste de hipóteses descrevem um modelo linear de variáveis, porém quando levado para modelos lineares generalizados precisamos levar em conta a função de ligação utilizada no modelo. Como utilizamos a função canônica de ligação para o GLM da família Poisson, sua link é a Função logarítmica, o que deve de ser levado a diante no teste de razões LRT seria algo como:
+
+$$
+H_0: e^\mu = e^\mu = e^\mu = e^\mu = e^\mu
+$$
+
+$$
+H_1: \mu \neq \mu \neq \mu \neq \mu \neq \mu
+$$
