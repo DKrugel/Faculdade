@@ -1,0 +1,491 @@
+---
+title: "AVALIACAO"
+author: "Daniel Krugel"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  word_document: default
+  html_document:
+    df_print: paged
+---
+
+# Questão 1
+
+$H_0$ - probabilidade dos insetos do meio ambiente apresentarem a característica
+A é 25%
+$H_1$ - probabilidade dos insetos do meio ambiente apresentarem a característica
+A é diferente de 25%
+
+```{r Q1 dado, include=FALSE}
+P_Y <- c(0.0056,0.0338,0.0958,0.1704,0.2130,0.1988,0.1436,0.0820,0.0376,
+         0.0139,0.0042,0.0010,0.0002,replicate(6,0))
+```
+```{r Q1 tabela,echo=FALSE}
+data.frame(P_Y)
+```
+
+P[Y <= t1] $\approx$ 0.025 -> P[Y <= 1] = 0,0394
+P[Y >= t2] $\approx$ 0.025 -> P[Y >= 9] = 0,0193
+Se o número de insetos observados pelo experimento com a característica A, for menor ou igual a 1 ou
+maior ou igual a 9, rejeitamos a Hipótese Nula.
+
+```{r stats, include = FALSE}
+S.L <- 1-0.0394 - 0.0193
+p_value <-  0.0056+0.0042 + 0.0010 + 0.0002
+```
+
+O teste de significância foi de `r S.L` e o P-valor calculado foi de `r p_value`.
+
+A hipótese nula H0 de que p = 0,25 é rejeitada. Existem evidências significativas para a rejeicão, com um nível de significância adotado de 5,88% e um valor de p de 0,011
+
+Não é razoável supor que os insetos presentes neste ambiente possuam a característica A com a mesma probabilidade que a espécie em geral, dado o número de insetos observados e aceitando uma taxa de erro de 5,88%. Se a probabilidade fosse igual à espécie geral, a probabilidade de encontrar um valor tão ou mais extremo do que o observado seria de 1,1%. Portanto, podemos inferir que a probabilidade difere da espécie em geral, com uma taxa de erro de 1,1%, que é menor do que a aceita inicialmente.
+
+# Questão 2
+
+$H_0$ - probabilidade dos veículos da categoria apresentarem problemas de seguranca é
+menor ou igual 40%
+$H_1$ - probabilidade dos veículos da categoria apresentarem problemas de seguranca é
+maior que 40%
+
+```{r Q2 Data, include=FALSE}
+P_Y <- c(0.0003,
+         0.0030,
+         0.0150,
+         0.0468,
+         0.1014,
+         0.1623,
+         0.1983,
+         0.1889,
+         0.1417,
+         0.0840,
+         0.0392,
+         0.0142,
+         0.0040,
+         0.0008,
+         0.0001,
+         0.0000,
+         0.0000)
+S.L <- 0.0583
+p_value <-  0.1417 + 0.084 + 0.0392 + 0.0142 + 0.004+ 0.0008 + 0.0001
+```
+```{r tabela, echo = FALSE}
+data.frame(P_Y)
+```
+
+No Teste Binomial - B:
+A probabilidade de observarmos Y igual ou maior que t é de 0,05. Em outras palavras, a probabilidade de observarmos Y maior ou igual a 9 é de 0,0583.
+Se o número de carros com problema de seguranca for igual ou superior a 10, rejeitaremos a Hipótese Nula.
+
+Como T é igual 8, então a decisão final é de rejeitar-se a hipótese nula.
+
+Foi adotado um nível de significancia de é `r S.L` e o p valor de `r p_value`
+
+Não se rejeita a $H_0$ de que p <= 0.4. Não há evidências
+significativas para a rejeicão, sob nível de significância adotado de 5,83%, e com p-valor de 0,2839.
+
+Com o número de carros com defeito observados foi igual a 8, não é razoável assumir que a probabilidade de apresentarem
+defeito seja a maior que 40%.
+Dado que a probabilidade de apresentarem defeito não é maior que 40%, a
+probabilidade de encontrarmos um valor tão ou mais extremo que o observado
+é de 28,39%. Se fosse aceita a hipótese de os carros possuírem probabilidade
+maior que 40%, estaríamos assumindo uma chance de cometermos um erro de
+28,39%, maior que a aceita no início.
+
+# Questão 3
+
+$H_0$ - probabilidade dos alunos da outra instituicão resolverem a questão é 40%
+$H_1$ - probabilidade dos alunos da outra instituicão resolverem a questão é diferente de 40%
+
+```{r Q3, include=FALSE}
+P_Y <- c(0.0005,
+0.0047,
+0.0219,
+0.0634,
+0.1268,
+0.1859,
+0.2066,
+0.1771,
+0.1181,
+0.0612,
+0.0245,
+0.0074,
+0.0016,
+0.0003,
+0.0000,
+0.0000)
+
+S.L <- (0.0271 + 0.0338) * 100
+p_value <- 0.0634+ 0.0219 + 0.0047 + 0.0005 + 0.0612 + 0.0245 + 0.0074 + 0.0016 + 0.0003 
+```
+```{r Q3 tabela, echo = F}
+data.frame(P_Y)
+```
+
+Com base em um teste binomial com parâmetro p0, se o número de alunos que resolvem a questão for menor ou igual a 2, a probabilidade de observar esse resultado ou um resultado ainda mais extremo é de aproximadamente 0,0271. Portanto, se a significância do teste for definida em 0,05, podemos rejeitar a hipótese nula se Y <= 2.
+
+Da mesma forma, se o número de alunos que resolvem a questão for maior ou igual a 10, a probabilidade de observar esse resultado ou um resultado ainda mais extremo é de aproximadamente 0,0338. Portanto, se a significância do teste for definida em 0,05, podemos rejeitar a hipótese nula se Y >= 10.
+
+Dado que o numero de sucessos observados foi igual a 3, não se rejeita $H_0$
+
+O Nível de significância adotado foi de `r S.L` e o P valor adotado foi de `r p_value`.
+
+Com base no nível de significância de 6,09%, e no p-valor de 0,011, não há evidências significativas para rejeitar a hipótese nula de que a proporcão é igual a 0,4. Ou seja, não há suporte estatístico para a afirmacão de que a proporcão é diferente de 0,4 ao nível de significância de 6,09%.
+
+Com base no número de alunos que resolveram a questão, podemos considerar razoável assumir que os alunos de ambas as instituicões possuem a mesma probabilidade de resolver a questão.
+
+Se considerarmos que a probabilidade de resposta é igual para ambas as instituicões, a probabilidade de obtermos um valor tão extremo ou mais extremo do que o valor observado é de 18,55%.
+
+No entanto, se rejeitássemos a hipótese de que as probabilidades são iguais, estaríamos assumindo um risco maior do que o inicialmente aceito. O nível de significância aceito no início implicaria em um risco de erro menor do que 18,55%. Portanto, seria mais prudente manter a hipótese de igualdade de probabilidades, com base na probabilidade de erro aceitável.
+
+# Questão 4
+
+$H_0$ - probabilidade do eleitor aprovar a proposicão é menor ou igual a 30%
+$H_1$ - probabilidade do eleitor aprovar a proposicão é maior que 30%
+
+```{r Q4 dados, include = FALSE}
+P_Y <- c(0.0824,
+0.2471,
+0.3177,
+0.2269,
+0.0972,
+0.0250,
+0.0036,
+0.0002)
+S.L <- 0.0288
+p_value <- 0.025+0.0036+0.0002
+```
+```{r Q4 table, echo=FALSE}
+data.frame(0:7,P_Y)
+```
+
+Com base em um teste binomial com parâmetro p0, se o número de eleitores favoráveis for maior ou igual a 5, a probabilidade de observar esse resultado ou um resultado ainda mais extremo é de aproximadamente `r S.L`, com um nível de significância de 0,05. Portanto, se o nível de significância for definido em 0,05, podemos rejeitar a hipótese nula se Y >= 5.
+
+Em resumo, se o número de eleitores favoráveis for maior ou igual a 5, podemos rejeitar a hipótese nula com um nível de significância de 0,05.
+
+Com base em um teste de hipótese com nível de significância adotado de `r S.L*100`, podemos rejeitar a hipótese nula de que a proporcão p de uma determinada populacão é menor ou igual a 0,3. Isso ocorre porque o p-valor associado ao teste foi de `r p_value`, o que indica que há evidências significativas para a rejeicão da hipótese nula.
+
+Com base no número de eleitores favoráveis observado, podemos concluir que há evidências significativas para a hipótese alternativa de que a proporcão de eleitores favoráveis é maior do que 30%. Isso pode ser afirmado com um nível de significância adotado de 2,88%, que foi aceito no início do teste de hipótese.
+
+No caso em que a probabilidade de aprovacão da proposicão pelos eleitores fosse menor ou igual a 30%, a probabilidade de encontrar um resultado tão extremo ou mais extremo do que o observado seria de 2,88%. No entanto, como essa probabilidade é menor do que o nível de significância adotado, podemos rejeitar a hipótese nula e concluir que a probabilidade de aprovacão da proposicão é maior do que 30%, com uma chance de estarmos cometendo um erro de 2,88%, igual àquela aceita no início do teste de hipótese.
+
+# Questão 5
+
+```{r Q5}
+dados <- c(20.5,40,60.5,22,42,62,28,43,62.8,29.5,43.5,63,32,44,66,34,48,72,35,52,83,38,54,83.8,39.8,57,90,40,60,110)
+
+sumario <- summary(dados)
+Z_tabelado <- 1.28
+EPM <- Z_tabelado*sd(dados)/sqrt(length(dados))
+
+lower <- as.numeric(sumario[5]) - EPM
+upper <- as.numeric(sumario[5]) + EPM
+round(data.frame(lower, quartil = as.numeric(sumario[5]),upper, row.names = "80% IC"),4)
+```
+
+O intervalo contém o 3 Quartil dos dados, dado por `r as.numeric(sumario[5])` para as árvores observadas, com 80% de confianca.
+
+Existe uma probabilidade de 80% do terceiro quartil estar dentro do intervalo de `r lower` e `r upper`.
+
+# Questão 6
+$H_0$ - a amostra provém de um Uniforme (10; 120)
+$H_1$ - a funcão distribuicão não é uma Uniforme (10; 120)
+
+```{r Q6, include=FALSE}
+p <- (120-10)/4
+dados.6 <-c(replicate(7, '(10,37.5]'), replicate(17, '(37.5,65]'), replicate(5, '(65,92.5]'), replicate(1, '(92.5,120]'))
+xx <- table(dados.6)
+table <- chisq.test(xx)
+```
+```{r Q6 table, echo = FALSE}
+xx <- table(dados.6)
+chisq.test(xx)
+```
+
+Se o T calculado for maior ou igual a `r qchisq(0.95,3)`, rejeitamos a Hipótese Nula.
+
+Como T calculado é dado por `r table$statistic` Rejeitamos a hipótese nula com P valor dado por `r table$p.value`
+
+Com base nos dados observados, não é justificável assumir que a altura das árvores nessa região siga uma distribuicão uniforme entre 10 e 120 metros, considerando um nível de significância de 5%. Isso ocorre porque a probabilidade de encontrar um resultado tão extremo ou mais extremo do que o observado é de apenas 0,03%, o que é menor do que o nível de significância adotado.
+
+Portanto, podemos concluir que a altura das árvores na região não segue uma distribuicão uniforme, com uma chance de estarmos cometendo um erro de 0,03%, que é menor do que a aceita inicialmente. Isso sugere que devemos explorar outras distribuicões possíveis para os dados das alturas das árvores.
+
+# Questão 7
+$H_0$ - a amostra provém de uma Normal
+$H_1$ - a funcão distribuicão não é uma Normal
+
+```{r Q7, include=FALSE}
+sumario <- summary(dados)
+Q1 <- as.numeric(sumario[2])
+Q2 <- as.numeric(sumario[3])
+Q3 <- as.numeric(sumario[5])
+
+freq <- c(sum(dados < Q1), sum(dados < Q2 & dados > Q1), sum(dados < Q3 & dados > Q2), sum(dados > Q3))
+df <- t(data.frame(freq))
+colnames(df) <- c(1:4)  
+table <- ks.test(df, pnorm)
+```
+```{r Q7 table, echo= FALSE, warning=FALSE}
+df
+ks.test(df, pnorm)
+```
+
+Com base nos dados observados, podemos assumir que a altura das árvores dessa região segue uma distribuicão normal, considerando um nível de significância de 5%. Se essa hipótese for verdadeira, a probabilidade de encontrarmos um valor tão extremo ou mais extremo do que o observado é de `r table$p.value*100`%.
+
+No entanto, se rejeitássemos a hipótese de que os dados seguem uma distribuicão normal, estaríamos assumindo uma chance de cometer um erro de `r table$p.value*100`%, que é maior do que o nível de significância adotado. Portanto, não temos evidências para rejeitar a hipótese de que a altura das árvores segue uma distribuicão normal com uma chance de cometermos um erro de 5%.
+
+No entanto, é importante ressaltar que essa conclusão é baseada apenas nos dados observados e que outros fatores podem influenciar a distribuicão das alturas das árvores, como condicões climáticas, tipos de solo, entre outros.
+
+# Questão 8
+
+$H_0$ - a amostra provém de uma Exponencial
+$H_1$ - a funcão distribuicão não é uma Exponencia
+
+```{r Q8, include= F}
+table <- ks.test(df, pexp)
+```
+```{r Q8 table, echo = FALSE, warning = FALSE}
+ks.test(df, pexp)
+```
+
+Com os dados observados, não é razoável assumirmos que a altura das árvores dessa região siga uma Distribuicão Exponencial, assumindo uma chance de cometermos um erro de 5%.
+
+Caso as alturas das árvores seguissem uma Distribuicão Exponencial, a probabilidade de encontrarmos um valor tão ou mais extremo que o observado é menor que `r table$p.value*100`%. Podemos então assumir que a altura das árvores na região não segue uma Distribuicão Exponencial, com uma chance de cometermos um erro menor que `r table$p.value*100`%, menor que a aceita inicialmente.
+
+# Questão 9
+
+$H_0$ - a amostra provém de uma Exponencial
+$H_1$ - a funcão distribuicão não é uma Exponencial
+
+```{r Q9, include = FALSE}
+dados <- c(1,1.2,2.2,2.5,2.7,3,3.6,3.8,4.9,6.1,6.6,6.7,10.2,11.5,12.3,14.8,20.8,26.1,31.3,31.5)
+esperanca <- mean(dados)
+lambda <- 1/esperanca
+Q1 <- -(1/lambda)*log(0.75)
+Q2 <- -(1/lambda)*log(0.5)
+Q3 <- -(1/lambda)*log(0.25)
+freq <- c(sum(dados < Q1), sum(dados < Q2 & dados > Q1), sum(dados < Q3 & dados > Q2), sum(dados > Q3))
+df <- t(data.frame(freq))
+colnames(df) <- c(1:4)  
+
+table <- chisq.test(df)
+
+```
+```{r Q9 table, echo = FALSE, warning=FALSE}
+df
+chisq.test(df)
+```
+
+Com os dados observados, podemos assumir que o tempo de reação desse processo segue uma Distribuição Exponencial, e a probabilidade de encontrarmos um valor tão ou mais extremo que o observado é `r as.numeric(table$p.value)*100`%. Caso fosse rejeitada a hipótese de que o tempo segue uma Distribuição Exponencial, estaríamos assumindo uma chance de cometermos um erro de `r as.numeric(table$p.value)*100`%, o que é maior que o nível de significância adotado no início.
+
+# Questão 11
+
+```{r Q11, include = FALSE}
+P <- c(
+0.0000,
+0.0000,
+0.0002,
+0.0011,
+0.0046,
+0.0148,
+0.0370,
+0.0739,
+0.1201,
+0.1602,
+0.1762,
+0.1602,
+0.1201,
+0.0739,
+0.0370,
+0.0148,
+0.0046,
+0.0011,
+0.0002,
+0.0000,
+0.0000)
+df <- data.frame(P)
+alpha_1 <- 0.0207
+alpha_2 <- 0.0207
+ic_confint <- 1-alpha_1-alpha_2
+```
+```{r Q11 table, echo = FALSE}
+df
+print(ic_confint <- 1-alpha_1-alpha_2)
+```
+P[Y <= 5] = 0,0207
+P[Y > 14] = 0,0207
+
+P[3 <= Xp <= 12.3] >= 0,9586
+
+Calculando pelo `R` o intervalo de confiança chegamos ao valor de `r ic_confint*100`% intervalo entre 3 e 12,3 unidades de Tempo, contenha o real valor da mediana do tempo de reação
+(ou seja, que 50% dos tempos de reação estejam abaixo desse valor).
+
+# Questão 12
+$H_0$ - Não há efeito favorável da meditação sobre o tempo de sono
+$H_1$ - Há efeito favorável da meditação sobre o tempo de sono
+```{r Q12, include = FALSE}
+x <- c(35,24,28,31,38,30,33,32,28,29,30,30,33,32,34,36,27,22,31,38)
+y <- c(33,30,40,45,48,27,44,45,35,42,38,38,40,30,35,42,40,45,44,35)
+library(BSDA)
+table <- SIGN.test(x,y)
+```
+```{r Q12 test, echo = TRUE}
+BSDA::SIGN.test(x,y)
+```
+Se não houver uma melhora no tempo de sono, a probabilidade de encontrar um valor tão ou mais extremo que o observado é de `r table$p.value*100`%. Podemos, portanto, inferir que a meditação ajuda pessoas com problemas de sono com uma margem de erro de apenas `r table$p.value*100`%, que é menor do que a margem de erro inicialmente aceita.
+
+# Questão 13
+$H_0$ - Não existe preferência por uma marca
+$H_1$ - Existe preferência pela marca A ou B
+```{r Q13, include= FALSE}
+marcaA <- c(18, 4)
+marcaB <- c(8, 0)
+df <- data.frame(marcaA, marcaB)
+
+qchisq(0.95, 2) > (((18-22)^2)/22) + (((8-12)^2)/12) + (((4-4)^2)/4)
+```
+```{r Q table, echo = FALSE}
+df
+```
+```{r Q13 equation}
+qchisq(0.95, 2) > (((18-22)^2)/22) + (((8-12)^2)/12) + (((4-4)^2)/4)
+```
+
+ Como o valor crítico para a qui quadrado é maior do que o valor da qui quadrado calculado,não rejeitamos a hipótese nula. Portanto, não há evidência suficiente para afirmar que as preferências são significativamente diferentes entre as duas marcas. Assim, concluímos que, no nível de significância de 0,05, não há evidência de diferença significativa de preferência entre as duas marcas.
+
+# Questão 14
+
+$H_0$ - O debate não influenciou na opinião do eleitor quanto à lei
+$H_1$ - O debate influenciou na opinião do eleitor quanto à lei
+
+```{r Q14, include=FALSE}
+contra <- c(15, 8)
+favor <- c(22,5)
+
+df <- data.frame(contra,favor)
+row.names(df) <- c("contra","a favor")
+```
+```{r Q14 CT, echo = FALSE}
+df
+```
+```{r Q14 eq}
+qchisq(0.95, 1) > ((22 - 8)^2)/(22 + 8)
+```
+
+Rejeita-se hipótese nula dado que o valor calculado da chi square (`r qchisq(0.95,1)`) é menor do que o valor calculado com as observações do exercício.
+
+```{r Q14 mais contas...}
+p <- ((22 - 8)^2)/(22 + 8)
+
+# % de eleitores favoráveis à mudança antes do debate
+(815)/50
+
+# % de eleitores favoráveis à mudança depois do debate:
+(2215)/50
+
+# P-valor
+pchisq(p, 1, lower.tail = F)
+
+```
+
+Com base nos dados observados, é possível concluir que há evidências suficientes para afirmar que o debate influenciou favoravelmente a opinião do eleitor em relação à mudança de lei, aceitando uma margem de erro de 5%. Se não houvesse influência do debate, a probabilidade de encontrar um valor tão ou mais extremo que o observado seria de `r pchisq(p, 1, lower.tail = F)*100`%. Portanto, podemos inferir que o debate influenciou favoravelmente a opinião do eleitor em relação à mudança de lei, com uma margem de erro de apenas `r pchisq(p, 1, lower.tail = F)*100`%, o que é menor do que a margem de erro aceita inicialmente.
+
+# Questão 15
+$H_0$ - Não há diferença no nível de dor entre as duas técnicas
+$H_1$ - Há diferença no nível de dor entre as duas técnicas
+
+# Questão 16
+```{r Q16 , include=FALSE}
+Class <- c(1:18)
+Treino <- c(0, 0, 1, 1, 0, 0,0,0,1,1,0,1,
+            0,1,1,1,1,1)
+# C = 0
+# T = 1
+
+df <- data.frame(Class, Treino)
+
+m <- sum(df$Treino == 1)
+n <-sum(df$Treino == 0)
+
+R_xi <- 53
+
+W_tabled <- 57
+T_resp <- sum(R_xi)
+
+W_tabled > T_resp
+```
+```{r Q16 table, echo=FALSE}
+df
+```
+Os dados tabelados foram alterados, o treino C virou 0 e o treino T virou 1 para facilitar as contas.
+
+```{r}
+m <- sum(df$Treino == 1)
+n <-sum(df$Treino == 0)
+W_tabled <- 57
+T_resp <- sum(R_xi)
+W_tabled > T_resp
+```
+
+Rejeita-se a H0 de que P[X < Y] = 0,5. Há evidências
+significativas para a rejeição, sob nível de significância de 5%, e com p-valor de `r pnorm(2.6302, lower.tail = FALSE)`.
+
+# Questão 17
+
+$H_0$ - Não houve redução na frequência cardíaca após o tratamento
+$H_1$ - Houve redução na frequência cardíaca após o tratamento
+
+```{r Q17, include = FALSE}
+Antes <- c(125,132,138,120,125,127,136,139,131,132,135,136,128,127,130)
+Depois <- c(118,134,130,124,105,130,130,132,123,128,126,140,135,126,132)
+D_i <- c(7,2,8,4,20,3,6,7,8,4,9,4,7,1,2)
+Sinal <- c(-1,1,-1,1,-1,1,-1,-1,-1,-1,-1,1,1,-1,1)
+Rank <- c(10,2.5,12.5,6,15,4,8,10,12.5,6,14,6,10,1,2.5)
+R_i <- Sinal * Rank
+df <- data.frame(Antes, Depois, D_i,Rank,R_i)
+```
+```{r Q17 qnorm}
+P <- sum(R_i)/sqrt(sum(R_i^2))
+pnorm(p)
+```
+
+Como existem empates, será usado a aproximação para uma Normal Padrão:
+Por ser um teste unilateral temos que, P -> P[Z < z] = 0,05 -> -1,64.
+Logo, rejeitaremos a Hipótese Nula se P for inferior a -1,64
+
+Com o valor de P calculado a cima temos `r P`
+
+Rejeita-se a hipótese nula com base no pvalor apresentado a cima(`r pnorm(p)`), porém vale ressaltar que tanto o P valor quanto a regra de decissão ficaram extremamente em cima da linha, indicando que é necessário realizar mais estudos para uma melhor conclusão.
+
+# Questão 18
+
+$H_0$ - Os 3 medicamentos produzem o mesmo efeito contra a dor
+$H_1$ - Pelo menos um medicamento é mais efetivo contra a dor
+
+```{r Q18, include=FALSE}
+Med1 <- c(7,8,7,6,9,8,6)
+Rank_Med1 <- c(16,19.5,16,10.5,21,19.5,10.5)
+Med2 <- c(5,4,6,7,4,5,7)
+Rank_Med2 <- c(6,2.5,10.5,16,2.5,6,16)
+Med3 <- c(6,6,4,6,5,4,7)
+Rank_Med3 <- c(10.5,10.5,2.5,10.5,6,2.5,16)
+
+df <- data.frame(Med1, Rank_Med1, Med2, Rank_Med2, Med3, Rank_Med3)
+
+```
+
+Como existem empates, será usado a aproximação para uma Qui-Quadrado:
+Chi square tabelada = 5,99, logo, rejeitaremos a hipótese Nula, caso o valor de T seja maior ou
+que 5,99
+
+```{r}
+df
+R_Xij <- (21*22*43)/6
+s2 <- (1/20)*(R_Xij - (21*(22^2))/4)
+T_resp <- (1/s2)*((113^2)/length(Med1)+(59.5^2)/length(Med2)+(58.5^2)/length(Med3)-(21*(22^2))/4)
+```
+O valor de frequencia obtido foi de `r T_resp`, portanto pela regra de decisão, rejeitaremos a hipótese nula utilizando o p valor de `r pchisq(T_resp, 2, lower.tail = FALSE)`
+
+Com base nos dados observados, é possível concluir que existem evidências suficientes para afirmar que pelo menos um dos medicamentos difere dos demais, aceitando uma margem de erro de 5%. Se não houvesse diferença entre os medicamentos, a probabilidade de encontrar um valor tão ou mais extremo que o observado seria de `r pchisq(T_resp, 2, lower.tail = FALSE)*100`%. Portanto, podemos inferir que pelo menos um medicamento difere dos demais, com uma margem de erro de apenas %, o que é menor do que a margem de erro aceita inicialmente.
+
+Todo o código usado para esta avaliação, como o seu enunciado estará disponibilizada no repositório aberto que mantenho para uso pessoal, avaliativo e didático.
+Os arquivos estarão disponíveis em DKrugel/Faculdade

@@ -36,8 +36,7 @@ starbucks$Day <- factor(starbucks$Day,
 
 starbucks %>% 
   ggplot(aes(x = Day, y = Count)) +
-  geom_bar(stat = "identity") +
-  theme_ipsum(base_family = )
+  geom_bar(stat = "identity")
 
 ```
 
@@ -70,7 +69,7 @@ Aqui o intercepto equivale a segunda feira.
 ## II)
 
 ```{r Anova Aparente}
-Anova(fit1)
+xtable(Anova(fit1))
 ```
 
 ```{r Anova silenciosa, include=FALSE}
