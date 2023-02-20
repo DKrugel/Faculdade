@@ -1,0 +1,231 @@
+---
+title: "Trabalho 2"
+author: "Daniel Krügel"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(hrbrthemes)
+set.seed(123)
+```
+
+# Análise preliminar
+
+Estarei utilizando a função de número 14, com a geração de números descrita no meu trabalho anterior.
+
+Como neste dia em que escrevo este trabalho o trabalho 1 não foi corrigido, estarei assumindo que está coerente com o que foi ensinado em sala de aula.
+
+```{r ger_14, include = FALSE}
+ger_ex14 <- function(param){
+  # Função de probabilidade
+  fx14 <- function(x,theta = 1,pi = 2){
+    log(pi)*exp(( (-exp(pi^(pi*x) ) * theta) )+ pi ^ (pi*x)) * (pi ^((pi*x)+1)) * theta
+  }
+  
+  M <- 2
+  x <- numeric(param[1])
+  i <- 1
+  k <- 1
+  
+  while(i <= param[1]){
+    y <- rexp(1,rate = 10)
+    u <- runif(1)
+    ratio <- fx14(y,param[2],param[3])/(M * dexp(y,10))
+    if( u < ratio){
+      x[i] <- y
+      i <- i+1
+    }
+    k <- k + 1
+  }
+  return(x)
+}
+```
+
+Encontrei alguns problemas de inconsistência rodando a funcão `optim`, portanto irei incluir um print de quando consegui fazer ela rodar em outro computador.
+
+```{r, echo=FALSE}
+knitr::include_graphics("~/Faculdade/Computacional 2/optim.jpeg")
+```
+
+Foi utilizado os parâmetros de $\theta_1 = 1$ e $\theta_2 = 2$ para a estimação usando este optim.
+
+Caso a resolução tenha ficado baixa, estarei encaminhando o jpeg junto ao trabalho.
+
+Para a estimativa do erro padrão, foi utilizado o seguinte código:
+
+```{r sd}
+N <- 1000
+g <- numeric(N)
+for(i in 1:N){
+  x <- ger_ex14(c(2,1,2))
+  g[i] <- abs(x[2] - x[1])
+}
+mean(g)
+```
+
+Foi usado como base o código disponibilizado no material complementar [*http://cursos.leg.ufpr.br/ce089/09_MC_inf_estimacao.html#64_Exemplo\_(erro_padr%C3%A3o)*](http://cursos.leg.ufpr.br/ce089/09_MC_inf_estimacao.html#64_Exemplo_(erro_padr%C3%A3o))
+
+Em seguida foi pedido para se calcular o intervalo de confiança para a predicão do `optim()` utilizando a função `confint()`, porém ela só pode ser utilizada com modelos da classe  `lm` segundo a sua documentação disponível no CRAN, portanto prossegui com a maneira analítica:
+```{r IC}
+# IC do meu erro padrão das estimativas com 95% de confianca:
+#theta1
+1.133861 + (c(-1,1)*1.96 * mean(g))
+
+#Theta2
+1.801283 + (c(-1,1)*1.96 * mean(g))
+```
+
+Para o desvio padrão calculado apartir de jack knife foi utilizado o seguinte código:
+```{r jk sd}
+dados <- ger_ex14(c(5,1,2))
+Est.test <- numeric(5)
+
+for(i in seq(1,length(dados))){
+  amostra_copy <- dados[-i]
+  Est.test[i]  <- mean(amostra_copy)
+}
+
+sd(Est.test) * (length(dados)-1)/length(dados)
+```
+
+Como pode,se observar, foi utilizado uma amostragem aleatória de tamanho 5.
+
+Para os cáculos utilizando bootstrap, mantive a mesma amostra utilizada para o método de Jack knife, para se manter tudo na mesma escala:
+```{r}
+
+# Função para obter o estimador de interesse
+estimador <- function(dados) {
+  return(mean(dados))
+}
+
+# Número de reamostragens bootstrap
+B <- 1000
+
+# Bootstrap
+estimativas_boot <- numeric(B)
+for (i in 1:B) {
+  dados_boot <- sample(dados, replace = TRUE)
+  estimativas_boot[i] <- estimador(dados_boot)
+}
+
+# Estimador corrigido
+estimador_corr <- mean(estimativas_boot) - (mean(estimativas_boot) - estimador(dados))
+
+# Erro padrão
+erro_padrao <- sd(estimativas_boot)
+
+# Intervalo de confiança de 95%
+quantil_inf <- quantile(estimativas_boot, 0.025)
+quantil_sup <- quantile(estimativas_boot, 0.975)
+intervalo_conf <- c(quantil_inf, quantil_sup)
+
+# Resultados
+cat("Estimador corrigido:", estimador_corr, "\n")
+cat("Erro padrão:", erro_padrao, "\n")
+cat("Intervalo de confiança (95%):", intervalo_conf, "\n")
+```
+
+# Estudo de caso
+
+Com toda a análise prévia, só foi necessário se criar um loop for para testar para tamanhos diferentes de amostras, como meu método de geração de números aleatórios levou em consideração apenas os parametros de $\theta_1 = 1$ e $\theta_2 = 2$ mantive eles para não precisar procurar outro ponto ótimo de M.
+Decidi tentar elevar a amostra em um crescimento linear enquanto o número de reamostragem bootstrap em um crescimento exponencial, porém rapidamente isso se mostrou custoso ao excesso, meu reles notebook de 12GB de memória RAM não passou do terceiro loop, portanto manterei o número de reamostras alto, porém fixo.
+
+```{r bootstrap}
+
+estimador_corr <- numeric(10)
+erro_padrao <- numeric(10)
+intervalo_conf <- data.frame()
+tamanho_amostra_inicial <- numeric(10)
+
+for(j in 1:10){
+dados <- ger_ex14(c(j*1000,1,2))
+tamanho_amostra_inicial[j] <- j*1000 
+# Função para obter o estimador de interesse
+estimador <- function(dados) {
+  return(mean(dados))
+}
+
+# Número de reamostragens bootstrap
+B <- 100000
+
+# Bootstrap
+estimativas_boot <- numeric(B)
+for (i in 1:B) {
+  dados_boot <- sample(dados, replace = TRUE)
+  estimativas_boot[i] <- estimador(dados_boot)
+}
+
+# Estimador corrigido
+estimador_corr[j] <- mean(estimativas_boot) - (mean(estimativas_boot) - estimador(dados))
+
+# Erro padrão
+erro_padrao[j] <- sd(estimativas_boot)
+
+# Intervalo de confiança de 95%
+intervalo_conf[j,1] <- as.numeric(quantile(estimativas_boot, 0.025))
+
+intervalo_conf[j,2] <- quantile(estimativas_boot, 0.975)
+
+}
+
+```
+
+```{r}
+par(mfrow = c(1,2))
+
+estimador_corr.df <- data.frame(tamanho_amostra_inicial, estimador_corr)
+estimador_corr.df %>% 
+  ggplot(aes(x = tamanho_amostra_inicial, y = estimador_corr)) +
+  geom_bar(stat = "identity") +
+  theme_ipsum()
+
+erro_padrao.df <- data.frame(tamanho_amostra_inicial, erro_padrao)
+erro_padrao.df %>% 
+  ggplot(aes(x = tamanho_amostra_inicial, y = erro_padrao)) +
+  geom_bar(stat = "identity") +
+  theme_ipsum()
+
+```
+Vemos que o estimador corrigido para a média se manteve constante no decorrer da quantidade de amostras iniciais, enquanto o desvio padrão caiu rapidamente, o que é coerente com a teoria de medida.
+
+Agora olhando para o intervalo de confianca nós temos a seguinte tabela:
+```{r rowname TIC, include=FALSE}
+rownames(intervalo_conf) <- tamanho_amostra_inicial
+```
+```{r tabela IC, echo = FALSE}
+intervalo_conf
+```
+
+# Jack knife
+
+Para Jack knife me limitei a 4 casos, aumentando na mesma proporcão do que os bootstrap, porém rapidamente ví que as estimativas decresciam muito rapidamente, então decidi parar, já que cerca de 400 amostras já era um número absurdo de amostras para se pensar em jack knife (N-1)
+
+```{r}
+erro_padrao_jk <- numeric(4)
+tam_amostra <- numeric(4)
+
+
+for(k in 1:4){
+  Amostra <- ger_ex14(c(k*1000, 1, 2))
+  tam_amostra[k] <- k*1000  
+  Est.test <- numeric(k*1000)
+for(i in seq(1,length(Amostra))){
+  amostra_copy <- Amostra[-i]
+  Est.test[i]  <- mean(amostra_copy)
+}
+
+erro_padrao_jk[k]<- sd(Est.test) * (length(Amostra)-1)/length(Amostra)
+}
+
+erro_padrao_jk.df <- data.frame(tam_amostra, erro_padrao_jk)
+erro_padrao_jk.df
+```
+O erro padrão decaí muito rápido conforme aumentamos o tamanho da amostra inicial. Interessante notar que nesta seed `123` o tamanho de amostras iniciais 3000 foi maior do que os outros, um comportamento que só observei enquanto escrevo este markdown.
+
+Este arquivo .pdf e .Rmd, assim como o enunciado deste trabalho ficaram disponíveis no meu repositório público para uso pessoal, didático e avaliativo. Os arquivos podem ser encontrados em DKrugel/Faculdade
