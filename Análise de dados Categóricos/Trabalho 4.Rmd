@@ -3,6 +3,7 @@ title: "Trabalho 4"
 author: "Daniel Krügel"
 date: "`r Sys.Date()`"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 ---
@@ -15,7 +16,11 @@ library(hrbrthemes)
 library(car)
 library(mcprofile)
 library(xtable)
+library(gtsummary)
+library(plotly)
 ```
+
+Estarei testando o pacote `gtsummary` para criar as tabelas deste trabalho, portanto deixarei todos os chunks de códigos com `echo = TRUE`.
 
 # Questão 13
 
@@ -36,8 +41,15 @@ starbucks$Day <- factor(starbucks$Day,
 
 starbucks %>% 
   ggplot(aes(x = Day, y = Count)) +
-  geom_bar(stat = "identity")
-
+  geom_bar(stat = "identity", color = "black") + 
+  theme(
+  panel.background = element_rect(fill = "lightgrey",
+                                colour = "lightgrey",
+                                linewidth = 0.5, linetype = "solid"),
+  panel.grid.major = element_line(linewidth = 0.5, linetype = 'solid',
+                                colour = "white"), 
+  panel.grid.minor = element_line(linewidth = 0.25, linetype = 'solid',
+                                colour = "white"))
 ```
 
 ## c)
@@ -48,29 +60,38 @@ fit1 <- glm(Count ~ Day,
             data = starbucks)
 ```
 
-```{r sumário, echo=FALSE}
-xtable(fit1)
+```{r sumário, echo=TRUE}
+fit1 %>% 
+  tbl_regression(add_estimate_to_reference_rows = F) %>% 
+  add_q()
 ```
+
+O pacote omitiu o intercepto, já pedi para ele exponenciar os coeficientes pois foi utilizado a função log, o valor do intercepto, que equivale a segunda-feira, é `r fit1$coefficients[1]`
 
 ## I)
 
 Lembrando que usamos a função de ligação log, então para conseguir as estimativas diárias precisamos passar um exponencial nos coeficientes.
 
-```{r exp coef, echo=FALSE}
-xtable(as.data.frame(exp(
-  coef(fit1)
-  ),
-  row.names = c('Segunda','Terça','Quarta','Quinta','Sexta')
-  ))
+```{r exp coef, echo=TRUE}
+fit1 %>% 
+  tbl_regression(exponentiate = T) %>% 
+  add_global_p()
 ```
-
-Aqui o intercepto equivale a segunda feira.
 
 ## II)
 
 ```{r Anova Aparente}
-xtable(Anova(fit1))
+xtable(Anova(fit1)) 
 ```
+
+Utilizando o pacote no qual estou aprendendo a usar, o valor do teste LR é omitido, porém o p-valor é exibido a cada covariável.
+
+```{r}
+fit1 %>% 
+  tbl_regression() %>% 
+  add_global_p()
+```
+
 
 ```{r Anova silenciosa, include=FALSE}
 nova <- Anova(fit1)
@@ -117,7 +138,7 @@ Estimativas
 Ambas as formas de escrita do teste de hipóteses descrevem um modelo linear de variáveis, porém quando levado para modelos lineares generalizados precisamos levar em conta a função de ligação utilizada no modelo. Como utilizamos a função canônica de ligação para o GLM da família Poisson, sua link é a Função logarítmica, o que deve de ser levado a diante no teste de razões LRT seria algo como:
 
 $$
-H_0: e^\mu = e^\mu = e^\mu = e^\mu = e^\mu
+H_0: e^\mu_1 = e^\mu_2 = e^\mu_3 = e^\mu_4 = e^\mu_5
 $$
 
 $$
