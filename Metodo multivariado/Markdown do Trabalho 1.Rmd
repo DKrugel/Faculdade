@@ -1,0 +1,60 @@
+---
+title: "Trabalho 1"
+author: "Daniel Krügel"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(andrews)
+```
+
+# Questão 1
+
+## a)
+
+```{r include=FALSE}
+# Taxas de desemprego em todos os estados federais
+# da Alemanha em setembro de 1999.
+local = "http://leg.ufpr.br/~lucambio/MSM/population.txt"
+dados = read.table(local, header = TRUE, sep = " ")
+```
+
+
+```{r}
+dados %>%
+  pivot_longer(!kiln, names_to = "Quimica", values_to = "Valores") %>% 
+  ggplot(aes(x = fct_inorder(Quimica), y = Valores))+
+    geom_boxplot()
+```
+
+## b)
+
+```{r}
+andrews(dados,
+        type = 1,
+        clr = 10,
+        step = 100)
+```
+
+## c)
+
+```{r}
+# Laço para criação dos Histogramas
+par(mfrow = c(3,3))
+for(i in 1:9){
+nome <- paste0("Concentração de ", names(dados)[i])
+
+hist(dados[,i], 
+     main = names(dados)[i],
+     xlab = nome,
+     ylab = "Frequência")
+
+}
+```
+
+# Questão 2
+
+## a)
