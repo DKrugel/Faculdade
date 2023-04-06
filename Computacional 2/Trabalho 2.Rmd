@@ -137,6 +137,7 @@ Com toda a análise prévia, só foi necessário se criar um loop for para testa
 Decidi tentar elevar a amostra em um crescimento linear enquanto o número de reamostragem bootstrap em um crescimento exponencial, porém rapidamente isso se mostrou custoso ao excesso, meu reles notebook de 12GB de memória RAM não passou do terceiro loop, portanto manterei o número de reamostras alto, porém fixo.
 
 ```{r bootstrap}
+# Para uma amostra
 
 estimador_corr <- numeric(10)
 erro_padrao <- numeric(10)
@@ -152,7 +153,7 @@ estimador <- function(dados) {
 }
 
 # Número de reamostragens bootstrap
-B <- 100000
+B <- 10000
 
 # Bootstrap
 estimativas_boot <- numeric(B)
@@ -201,6 +202,109 @@ rownames(intervalo_conf) <- tamanho_amostra_inicial
 ```{r tabela IC, echo = FALSE}
 intervalo_conf
 ```
+
+# Para várias amostras
+
+
+Reaplicando a mesma teoria anterior, mantendo 4 tamanhos de amostras mas gerando 500 de cada 
+```{r}
+
+estimador_corr1000 <- numeric(500)
+estimador_corr5 <- numeric(500)
+estimador_corr10 <- numeric(500)
+estimador_corr100 <- numeric(500)
+
+erro_padrao1000 <- numeric(500)
+erro_padrao5 <- numeric(500)
+erro_padrao10 <- numeric(500)
+erro_padrao100 <- numeric(500)
+
+intervalo_conf5 <- data.frame()
+intervalo_conf10 <- data.frame()
+intervalo_conf100 <- data.frame()
+intervalo_conf1000 <- data.frame()
+
+
+estimativas_boot5 <- numeric(B)
+estimativas_boot10 <- numeric(B)
+estimativas_boot100 <- numeric(B)
+estimativas_boot1000 <- numeric(B)
+B <- 1000
+
+
+
+for(j in 1:500){
+dados1000 <- ger_ex14(c(1000,1,2))
+dados5 <- ger_ex14(c(5,1,2))
+dados10 <- ger_ex14(c(10,1,2))
+dados100 <- ger_ex14(c(100,1,2))
+
+# Função para obter o estimador de interesse
+estimador <- function(dados1000) {
+  return(mean(dados1000))
+}
+
+# Número de reamostragens bootstrap
+#B <- 10000
+
+# Bootstrap
+
+for (i in 1:B) {
+  dados1000_boot <- sample(dados1000, replace = TRUE)
+  estimativas_boot1000[i] <- estimador(dados1000_boot)
+  dados5_boot <- sample(dados5, replace = TRUE)
+  estimativas_boot5[i] <- estimador(dados5_boot)
+  dados10_boot <- sample(dados10, replace = TRUE)
+  estimativas_boot10[i] <- estimador(dados10_boot)
+  dados100_boot <- sample(dados100, replace = TRUE)
+  estimativas_boot100[i] <- estimador(dados100_boot)
+  }
+
+# Estimador corrigido
+estimador_corr5[j] <- mean(estimativas_boot5) - (mean(estimativas_boot5) - estimador(dados5))
+estimador_corr10[j] <- mean(estimativas_boot10) - (mean(estimativas_boot10) - estimador(dados10))
+estimador_corr100[j] <- mean(estimativas_boot100) - (mean(estimativas_boot100) - estimador(dados100))
+estimador_corr1000[j] <- mean(estimativas_boot1000) - (mean(estimativas_boot1000) - estimador(dados1000))
+
+# Erro padrão
+erro_padrao1000[j] <- sd(estimativas_boot1000)
+erro_padrao5[j] <- sd(estimativas_boot5)
+erro_padrao10[j] <- sd(estimativas_boot10)
+erro_padrao100[j] <- sd(estimativas_boot100)
+
+
+
+
+# Intervalo de confiança de 95%
+intervalo_conf1000[j,1] <- as.numeric(quantile(estimativas_boot, 0.025))
+intervalo_conf1000[j,2] <- quantile(estimativas_boot, 0.975)
+
+intervalo_conf5[j,1] <- as.numeric(quantile(estimativas_boot5, 0.025))
+intervalo_conf5[j,2] <- quantile(estimativas_boot5, 0.975)
+
+intervalo_conf10[j,1] <- as.numeric(quantile(estimativas_boot10, 0.025))
+intervalo_conf10[j,2] <- quantile(estimativas_boot10, 0.975)
+
+intervalo_conf100[j,1] <- as.numeric(quantile(estimativas_boot100, 0.025))
+intervalo_conf100[j,2] <- quantile(estimativas_boot100, 0.975)
+
+}
+```
+
+
+Um gráfico comparando a média dos estimadores bootstrap para cada um do tamanho das amostras:
+```{r}
+
+comp.estimador <- t(data.frame("5" = mean(estimador_corr5), "10" = mean(estimador_corr10), "100" = mean(estimador_corr100), "1000" = mean(estimador_corr1000)))
+colnames(comp.estimador) <- c("media")
+comp.estimador <- as.data.frame(comp.estimador)
+comp.estimador$tamanho <- c(5,10,100,1000)
+
+ggplot(comp.estimador, aes(x = tamanho ,y = media)) +
+  geom_line()
+```
+
+
 
 # Jack knife
 
