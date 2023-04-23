@@ -1,0 +1,262 @@
+---
+title: "Avaliação 1"
+author: "Daniel Krügel"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(flextable)
+library(tidyverse)
+set_flextable_defaults(digits = 5)
+```
+
+# Introdução
+Para este trabalho com data de entrega do dia 17/04/2023 foi utilizado como editor de texto a linguagem markdown e para criação de tabelas e a facilitação da exibição de alguns calculos a linguagem R. Tentarei ser o mais claro possível neste trabalho, porém caso seja necessário tenho as anotações feitas por mim durante a execução do trabalho que seram enviadas ao email ary.sabbag@ufpr.br (e-mail encontrado no website departamental) em formato de PDF.
+
+# Resolução do problema para 2 jogadores
+
+Dado que temos $$X(t) = z_1 + z_2$$ onde X(t) equivale o que será pago pela banca e cada um dos Z o que cada jogador receberá após t jogadas.
+
+É conhecido neste problema o quanto cada um receberá após a jogada de um dado, portanto todas as probabilidades de resultados serão derivadas da multiplicação ponto a ponto de cada uma das probabilidades, também conhecido como o Teorema de Faurier, teorema do qual o teorema de convolução é derivado.
+
+Realizando as multiplicações teremos o seguinte dataframe:
+
+```{r Df1 2 jogadores, echo=FALSE, warning=FALSE}
+x2 <- c(0,1,2,6,7,12)
+px2x <- c("16/36","8/36","1/36","8/36","2/36","1/36")
+px2mx <- c(0.44,0.66,0.69,0.916,0.972,1)
+
+df2 <- data.frame(x2, px2x, px2mx)
+colnames(df2) <- c("x","P[X2 = x]","P[X2 <= x]")
+
+(df2)
+```
+
+Considerando essa tabela de valores acumulados podemos dar uma olhada no gráfico de probabilidades acumulada:
+```{r grafico 2 jogadores, echo = FALSE, warning=FALSE}
+plot(px2mx,
+     main = "Probabilidade acumulada de P[X2 < x]",
+     ylab = "Probabilidade",
+     xlab = "Valor de x",
+     type = "s")
+
+```
+
+O Xc equivale ao preço pago pelos 2 jogadores para que a banca não quebre com probabilidade epsolon, portanto
+o Xc que nos dará uma chance aceitável da banca se manter aberta $1 - \epsilon$ é de 6 unidades monetárias, dando 3 unidades para cada jogador 
+
+## Esperança
+
+Para calcularmos o valor esperado de pagamentos da banca, utilizaremos a fórmula dada em sala, que não passa do calculo do primeiro momento de uma distribuição discreta:
+
+$$ \sum\limits_{t=1}^{n}x_t*X(t) $$ 
+
+Em código do R ficará:
+
+```{r}
+px2xV2 <- c(16/36,8/36,1/36,8/36,2/36,1/36)
+Ex2 <- sum(df2$x * px2xV2)
+Ex2
+```
+
+## Variancia
+
+Para a variância utilizaremos o teorema:
+$$ Var(\mu) = E[\mu^2] - (E[\mu])^2 $$
+
+Ou seja a variância de uma variável aleatória é o segundo momento menos o quadrado do primeiro, portando utilizando o R para fazer este calculo e exibi-lô para o senhor fica:
+
+```{r segmomento 2 jogadores}
+# Calculo da variância de x2
+SegMomento2 <- sum((df2$x^2)*px2xV2)
+SegMomento2
+```
+
+```{r Var 2 jogadores}
+Varx2 <- SegMomento2 - (Ex2^2)
+Varx2
+```
+
+# Calculos para 3 jogadores
+
+$$ X(t) = Z_1 + Z_2 + Z_3 $$
+
+Aqui seguiremos a mesma lógica de como foi feito para 2 jogadores, como sabemos pelo teorema de convolução que a soma de 3 variáveis aleatórias recai novamente em uma soma de duas, neste caso será dada por:
+$$f[z_3\otimes(z_1+z_2)]$$
+No R isto será exibido pela seguinte tabela:
+```{r tabela 3 jogadores, echo=FALSE, warning=FALSE}
+z3 <- c(0,1,6)
+z1z2 <- x2
+
+df3V1 <- data.frame("0" = px2xV2*4/6, "1" = px2xV2*1/6, "6" = px2xV2*1/6)
+row.names(df3V1) <- x2
+colnames(df3V1) <- z3
+df3V1 #Tabela com valores de fourier z3 X (z1 + z2)
+
+```
+
+Para olharmos para a função de distribuição acumulada temos a seguinte tabela:
+```{r FDA 3 jogadores, echo = FALSE, warning=FALSE}
+x3 <- c(0,1,2,3,6,7,8,12,13,18)
+px3x <- c("64/216","48/216","12/216","1/216","48/216","24/216","3/216","12/216","3/216","1/216")
+px3mx <- c(0.2962, 0.5185, 0.5740, 0.5786, 0.80,0.91,0.92,0.9814,0.995,1)
+px3xV2 <- c(64/216,48/216,12/216,1/216,48/216,24/216,3/216,12/216,3/216,1/216)
+
+df3V2 <- data.frame(x3, px3x, px3xV2, px3mx)
+colnames(df3V2) <- c("x","P[X3 = x]","P[X3 = x] calculado","P[X3 <= x]")
+df3V2
+
+```
+
+Vamos dar uma olhada no gráfico da função distribuição acumulada de:
+```{r gráfico FDA 3 jogadores, echo=FALSE, warning=FALSE, fig.align='center'}
+plot(px3mx,
+     main = "Probabilidade acumulada de P[X3 < x]",
+     ylab = "Probabilidade",
+     xlab = "Valor de x",
+     type = "s")
+
+```
+
+Seguindo a mesma lógica usada para 2 jogadores o Xc que me dará um valor de $P[x_c <= 1 - \epsilon]$ é aproximadamente 7. Dando um valor para cada jogador de aproximadamente 7/3 = 2,33
+
+## Esperança
+
+Como a quantidade média paga pela banca é a esperança de $X_3(t)$ utilizarei o R para fazer este calculo:
+```{r}
+Ex3 <- sum(df3V2$x * px3xV2)
+Ex3
+```
+
+## Variancia
+
+Utilizarei o mesmo pensamento que da versão com 2 jogadores para o calculo de variancia de $X_3(t)$
+
+```{r}
+# Calculo da variância para 3 jogadores
+
+SegMomento3 <- sum((df3V2$x^2)*px3xV2)
+SegMomento3
+```
+```{r}
+Varx3 <- SegMomento3 - (Ex3^2)
+Varx3
+```
+
+# Calculando para 4 jogadores
+
+## ! Atenção !
+
+Como tive pouco tempo para me planejar para a realização deste trabalho, há um erro nas probabilidades de 4 jogadores, alguma das combinações de probabilidades foi deixada de lado, por conta disso os calculos estão incorretos e a acumulada não resulta em 1 quando somado todos os elementos da sigma algebra.
+
+## Resolução
+
+$$ X_4(t) = z_1 + z_2 + z_3 + z_4 $$
+O caso de 4 jogadores, assim como o de 3 jogadores recai em uma soma de duas variáveis aleatórias, sendo elas $z_4$ e $(z_1 + z_2 + z_3)$ portanto o tma de faurier recai na seguinte equação:
+$$f[z_4\otimes(z_1+z_2+z_3)]$$
+A multiplicação ponto a ponto recai na seguinte tabela:
+```{r, echo = F, warning=FALSE}
+z4 <- c(0,1,6)
+z1z2z3 <- x3
+
+df4V1 <- data.frame("0" = px3xV2*4/6, "1" = px3xV2*1/6, "6" = px3xV2 * 1/6)
+rownames(df4V1) <- x3
+colnames(df4V1) <- z4
+df4V1
+```
+
+Fazendo a acumulada da sigma algebra teremos a seguinte tabela:
+
+```{r FDA 4 jogadores, echo = FALSE, warning=FALSE}
+x4 <- c(0,1,2,3,4,6,7,8,9,12,13,14,18,19,24)
+px4x <- c("256","256","96","16","1","256","192","48","4","96","24","3","16","1","1")
+bazinga <- rep("/1296", 15)
+px4x <- paste0(px4x, bazinga)
+px4xV2 <- c("256","256","96","16","1","256","192","48","4","96","24","3","16","1","1")
+px4xV2<- as.numeric(px4xV2)/1296
+
+px4mx <- c(0.1975, 0.3950,0.4691,0.4814,0.4822,0.6797,0.8279,0.8640,0.8680,0.9421,0.9605,0.9629,0.9452,0.9760,0.9767)
+
+df4V2 <- data.frame(x4, px4x, px4xV2, px4mx)
+colnames(df4V2) <- c("x","P[X4 = x]","P[X4 = x] calculado","P[X4 <= x]")
+df4V2
+```
+
+Como comentado a cima, faltou alguma das combinações de probabilidade na hora de calcular a acumulada, por isso falta aproximadamente 3% para que a acumulada dê 1.
+
+Porém seguirei com as questões mesmo sabendo deste erro para ter alguma entrega.
+
+Utilizando a mesma lógica que as questôes anteriores o X crítico é de 12, com uma probabilidade de ruína de (1-0,94) 0.06, tendo como custo unitário para cada jogador algo em torno de 12/4 = 3 unidades monetárias.
+
+```{r, echo = FALSE}
+plot(px4mx,
+     main = "Probabilidade acumulada de P[X4 < x]",
+     ylab = "Probabilidade",
+     xlab = "Valor de x",
+     type = "s")
+```
+
+
+## Esperança
+
+A ideia de pagamento médio segue o mesmo que as anteriores, portanto:
+
+```{r}
+Ex4 <- sum(df4V2$x * px4xV2)
+Ex4
+```
+
+## Variância
+```{r}
+SegMomento4 <- sum((df4V2$x^2)*px4xV2)
+SegMomento4
+```
+```{r}
+Varx4 <- SegMomento4 - (Ex4^2)
+Varx4
+```
+
+# Para 3000 jogadores
+
+Como temos um n muito grande, podemos utilizar o teorema central do limite para aproximar o resultado em uma normal média 0 e desvio padrão 1
+Portanto teremos
+$$ S_n = z_1 + z_2 + z_3 + ... + z_n$$
+Onde z1, z2, z3... zn são idependentes e identicamente distribuídas onde $E[z_i] = \mu$ e $var[z_i] = \sigma²$ podemos tirar que:
+$$E[S_n] = E[\sum\limits_{i=1}^{n}z_i]=\sum\limits_{i=1}^{n}E[z_i]=\sum\limits_{i=1}^{n}\mu=n\mu$$
+$$Var[S_n] = Var[\sum\limits_{i=1}^{n}z_i] = \sum\limits_{i=1}^{n}E[z_i] = \sum\limits_{i=1}^{n}\sigma^2 = n\sigma^2$$
+Portanto:
+$$S_n \approx N(n*\mu,n*\sigma) $$
+
+No R para um jogador:
+
+```{r, warning=FALSE}
+x <- c(0,1,6)
+prob <- c(4/6,1/6,1/6)
+
+espX <- sum(x*prob)
+segMomentoX <- sum((x^2) * prob)
+
+varianciaX <- segMomentoX - espX^2
+(data.frame("Esperança" = espX, "2Momento" = segMomentoX, "Variancia" = varianciaX))
+```
+
+Utilizando os resultados já denotados anteriormente, temos que $\mu = 1,6666$ e $\sigma^2 = 4,8055$ portanto precisaremos multiplicar para n, no nosso caso $n = 3000$
+
+```{r}
+n <- 3000
+exp3000 <- espX * n
+var3000 <- varianciaX * n
+dp3000 <- sqrt(var3000)
+
+TCL <- exp3000 + (1.28 * dp3000)
+TCL/n 
+```
+
+Utilizei 1,28 pela acumulada de uma normal (0,1) acumulado para que sobre 0.1 a esquerda da distribuição. 
+
+Para 3000 jogadores teremos o valor unitário de cada jogo em 1,21 unidades monetárias.
