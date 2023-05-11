@@ -1,0 +1,21 @@
+---
+title: "Aula de metodologia de pesquisa"
+author: "Daniel"
+format: html
+editor: visual
+params:
+  my_species: "setosa"
+---
+
+```{r}
+library(gt)
+library(gtsummary)
+```
+
+## Gráfico
+
+```{r}
+tb <- iris |>
+  dplyr::filter(Species %in% params$my_species)
+plot(Sepal.Length ~ Sepal.Width, data = tb)
+```

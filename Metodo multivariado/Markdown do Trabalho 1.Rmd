@@ -131,13 +131,25 @@ M <- matrix(c(0,1/3,2/3,0,0,
 M
 ```
 
-Com a função `svd()` conseguiremos retirar os auto valores e as matrizes U e V, com elas conseguiremos a matriz diagonal objetivo
+Usando decomposição espectral, podemos definir potências da matriz:
 
 ```{r}
 m1 <- svd(M); m1
 ```
 
 ```{r}
-m1$u %*% m1$v
+m1$u %*% diag(m1$d) %*% t(m1$v)
 ```
 
+```{r}
+diag(m1$d)
+```
+
+Como o ultimo elemento é 0, quando jogarmos no calculo da inversa utilizando a função  `solve()` ela retornará erro, pois resultará em uma divisão por zero.  
+
+```{r, error = TRUE}
+Inversa <- m1$v %*% solve(diag(m1$d)) %*% t(m1$u)
+
+```
+
+Portanto não será possível obter esta decomposição.
