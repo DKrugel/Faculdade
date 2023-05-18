@@ -1,0 +1,125 @@
+---
+title: "Trabalho 2"
+author: "Daniel Krügel"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(gcmr)
+library(nnet)
+library(tidyverse)
+library(glmnet)
+library(lmtest)
+library(caret)
+```
+
+## Questão 1
+
+Para o ajuste do modelo coppula segue o código e o sumário da regressão:
+
+```{r include=FALSE}
+dados <-  read.csv("http://leg.ufpr.br/~lucambio/CE090/20231S/DRS.dat",
+                 header = TRUE, sep = ",")
+
+```
+
+```{r}
+fitcoppula <- gcmr(status ~ treat + age + type + obs_time, 
+     marginal = gaussian.marg(),
+     cormat = cluster.cormat(id, type = "exchangeable"),
+     data = dados)
+
+summary(fitcoppula)
+```
+
+Aparentemente a unica variável importante para o modelo é o tempo desde o tratamento. Como a Marginal foi informada pelo trabalho, não testei com outras para não me extender porém escolhi o melhor ajuste utilizando o critério de Akaike (AIC) já que para os modelos Coppula os resíduos do modelo não são informativos sobre a correção da gaussiana de coppula.
+
+## Questão 2
+
+Para a questão 2 temos que análisar os dados porém sem um modelo em mente, aproveitei para aplicar modelos que já foram vistos, incluindo modelos lineares simples, regressão logistica e modelos de regressão categóricas. Nenhuma dessas foi de longe informativa sobre a modelagem dos dados. 
+Portanto após uma análise descritiva dos dados a ficha me caiu e fiz uma regressão generalizada de poisson, já que os dados da variável resposta compreendem a uma resposta de contagem.
+
+```{r include=FALSE}
+dados <- read.csv(file = "http://leg.ufpr.br/~lucambio/MSM/cigarettes.txt",
+                  header = TRUE, sep = "")
+```
+
+
+```{r}
+fitglm <- glm(y ~.,
+              data = dados,
+              family = poisson) 
+car::Anova(fitglm)
+```
+A unica variável significativa neste modelo foi a Brand, representando a marca do cigarro.
+
+```{r}
+fitglm2 <- glm(y ~. + Brand:Price, 
+               family = poisson,
+               data = dados) 
+car::Anova(fitglm2)
+```
+O modelo com interação entre o preço e a marca do cigarro aparenta ser significativa também.
+
+```{r}
+fitglm3 <- glm(y ~. + I(Price^2), family = poisson, data = dados)
+car::Anova(fitglm3) 
+```
+
+O modelo com a adição do modelo quadrático para preço perdeu um pouco do poder de explicação das variáveis dependentes.
+
+Para comparar os 3 podemos usar novamente o critério de akaike para desempate:
+
+```{r}
+data.frame("Simples" = AIC(fitglm), "Interação" = AIC(fitglm2), "Quadratico"=AIC(fitglm3))
+```
+
+O modelo de interação apresentou um menor AIC, portanto é o modelo mais parcimonioso entre os 3.
+
+Para realizarmos a regressão Ridge precisamos criar as matrizes do modelo:
+```{r}
+dados$Gender <- ifelse(dados$Gender == "M", 1,0)
+dados$Brand <- ifelse(dados$Brand == "A",0,1)
+y <- dados$y
+x <- as.matrix(dados[,-1])
+```
+
+Em seguida podemos usar a função `glmnet` e utilizar a função `cv.glmnet` para calcular o Lambda ideal utilizando validação cruzada:
+
+```{r}
+regRidge <- glmnet(x,y, 
+                   family = "poisson", 
+                   alpha = 0)
+
+LambdaCalculado <- cv.glmnet(x,y) 
+
+regRidge <- glmnet(x,y, 
+                   family = "poisson", 
+                   alpha = 0,
+                   lambda = LambdaCalculado$lambda.min)
+```
+
+```{r}
+plot(LambdaCalculado)
+```
+No ultimo gráfico podemos dar uma olhada nos diferentes valores de Lambda possíveis versus o erro quadrático médio, uma visualização que nos ajuda a entender a importância de escolher um lambda ótimo.
+
+Para olharmos quais as variáveis de mais importância para a regressão vamos usar o pacote `caret` para treinar um modelo:
+
+```{r}
+library(caret)
+set.seed(123)
+modelo <- train(
+  form = y ~.,
+  method = "glmnet",
+  data = dados,
+  lambda = LambdaCalculado$lambda.min
+)
+```
+```{r}
+plot(varImp(modelo))
+```
+
+Contrariando os outros metodos, utilizando Regressão ridge encontramos que a variável Price é a mais influente.
