@@ -1,0 +1,58 @@
+---
+title: "Relatório escrito seminário"
+subtitle: "A Dual Model of Entertainment-Based Community-based Mechanisms to Explore Continued Participation in Online Entertainment Communities"
+author: "Caio Gomes Alves e Daniel Krügel"
+date: "`r Sys.Date()`"
+output: pdf_document
+documentclass: report
+---
+
+# Contexto do problema
+
+Lançado em 2004, pela Blizzard Entertainment, World of Warcraft(WoW) é um dos MMORPG (Multiplayer Massive Online Role Playing Game) mais influentes da história. O jogo consiste em um jogador criando um avatar, escolhendo uma das duas facções irá se aliar, dentro delas ele escolhe uma raça, que definirá o visual do seu avatar, assim como alguns atributos iniciais e a sua origem e por fim a sua classe, ou seja, o seu papel dentro do jogo. Apartir da criação do personagem ele passará a ter uma "vida dentro do jogo" onde se envolverá com a história do mundo de Azeroth e conhecerá jogadores onde poderá criar alianças (Guildas) ou disputas por território.
+
+# O problema
+
+Pessoas eventualmente param de jogar o jogo, seja por conta da vida social, responsabilidades com a família, escola, trabalho, querendo ou nâo WoW é um jogo denso, que requer esforço, disciplina e tempo, muito tempo. Com isso em mente os pesquisadores propuseram e testaram um modelo. A variável alvo deles é o engajamento do jogador ao longo do termo e as variáveis dependentes não são os motivos do qual um indivíduo parou de jogar mas por que continuou jogando. O modelo deles é simples, tem duas parcelas, uma onde eles chamam de "Entertainment-based Mechanism" e outra "Community-based Mechanism" e com base nisso eles modelam o tempo em que um jogador fica dentro do jogo.
+
+# População estudada
+
+A amostragem foi feita em sites que coletam informações sobre os jogadores em tempo real, a base inicial compreendia 91 000 avatares do período de Janeiro de 2006 até Janeiro de 2009, dentro dessa base foi filtrado jogadores do primeiro mês, ficando com 6 037 avatares e destes foi filtrado apenas os jogadores de nível 1 restando 2 302 avatares que foram acompanhados por 2 anos. Pela tabela disponibilizada no artigo, não foi mencionado porém só foi contabilizado jogadores que selecionaram raças filiadas a facção da Horda, porém informações como classe, raça e nível do jogador foram utilizadas como variáveis de controle.
+
+# Metodologia
+
+Foram ajustados diversos modelos semi paramétricos de regressão. O primeiro, utilizado para a interpretação dos resultados foi o modelo paramétrico de Weibull, o segundo foi utilizando o modelo log normal, o terceiro foi o modelo Logistico e por último o modelo de razão de chances. As variáveis estudadas, como mencionado a cima são com base nos dois grupos de variáveis resposta, "Entartainment-based Mechanism" foi utilizado duas medidas:\
+
+-   Inicial Use\
+
+    -   Um fator de 3 níveis onde indica a quantidade acumulada de tempo jogando na primeira semana do avatar.
+
+-   Frequency
+
+    -   Acumulado de dias jogados dividos pelo número de meses em que o avatar esteve ativo.
+
+Enquanto em "Community-based Mechanism" as duas variáveis propostas foram:\
+
+-   No. of guilds
+
+    -   Número total de guildas que um avatar se filiou.\
+
+-   Avg. days in guild
+
+    -   Média formada pela quantidade de dias distintos em que um avatar ficou em uma guilda divida pela quantidade de guildas pelo qual o avatar passou.
+
+# Conclusão
+
+O trabalho corrobora com outros trabalhos que indicam que jogadores mais regulares participam de atividades de grupo com mais intensidade. Outro resultado interessante é que a curva de sobrevivência decai rapidamente após os primeiros dias de atividade no jogo, porém quanto mais intenso foi o Inicial Use menos ela decaiu em seguida. Outra variável que modelou positivamente foi a frequencia, notou-se que jogadores que era constantes jogavam por mais tempo. Curiosamente as sugestões dos autores foram: Dado que o Inicial use maior influencia positivamente no engajamento, reformular as áreas iniciais do jogo, como jogadores mais frequentes são mais leais, adaptar o jogo para outros dispositivos mobile e claro, aumentar as possibilidades de se jogar em conjunto, para transformar guildas mais necessárias, e em 2010 a Blizzard Entertainnment lançou sua terceira expansão, reformulando as áreas iniciais do jogo, aumentando formas de se jogar em grupo e posteriormente em 2014 tivemos a primeira adaptação do jogo para celulares.
+
+# Críticas
+
+A pesquisa tem limitações quanto a censura, as metodologias disponíveis para se obter informações dentro do jogo não permitem uma análise que indique censura, porém nenhum dos casos que poderia gerar uma censura foi abordado no artigo, eles são:
+
+-   O jogador decide mudar de personagem.
+
+-   O jogador decide transferir de servidor.
+
+Em 2006 foi lançado o serviço "Server transfer" onde, pela primeira vez, seria possível transferir todo seu progresso para uma outra comunidade, isto pode ter gerados cenários onde avatares considerados mortos pela pesquisa só passaram a acessar servidores diferentes.
+
+Outro ponto é o nível onde foi feito o corte, jogadores que tem avatares no nível 1 representam duas categorias, jogadores novos e jogadores experientes que estão testando classes novas. A segunda categoria apresentam duas consequências: Censura e inflaciona a curva de sobrevivência para baixo com níveis de intensidade baixo para Inicial Use.
