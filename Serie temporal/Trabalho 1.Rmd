@@ -1,0 +1,184 @@
+---
+title: "Trabalho 1 séries temporais"
+author: "Daniel Krügel"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Questão 1
+
+```{r}
+set.seed(156) # Escolhendo uma seed para reprodutibilidade
+#a)
+s = c(rep(0,100), 10*exp(-(1:100)/20)*cos(2*pi*(101:200)/4))
+x = s + rnorm(200) # Adicionando componente aleatório
+plot.ts(x) 
+```
+## b)
+
+```{r}
+#b)
+sb = c(rep(0,100), 10*exp(-(1:100)/200)*cos(2*pi*(101:200)/4))
+xb = s + rnorm(200)
+plot.ts(xb) 
+
+a1 <- plot.ts(x, col = "red", ylim = c(-8,8))
+par(new = T)
+b1 <- plot.ts(xb, col = "black", ylim = c(-8,8))
+par(new = F)
+```
+
+Após o início da parcela exclusivamente aleatória, a alteração do modulador não alterou tanto a amplitude do sinal.
+
+## c)
+
+```{r}
+sc = c(rep(0,100), 10*exp((1:100)/200)*cos(2*pi*(101:200)/4))
+xc = s + rnorm(200)
+plot.ts(xc, col = "blue") 
+par(new = TRUE)
+plot.ts(xb)
+
+```
+A alteração do sinal não alterou a informação da série, algo que cogitei que poderia acontecer seria a inversão da série, porém acredito que isso só aconteceria caso opuvesse mudança na função coseno para a seno
+
+A comparação direta com a figura disponibilizada no material se parece com a série temporal relacionada a explosões, dado ao aumento repentino da variancia.
+
+```{r}
+v = filter(x, sides=2, rep(1/3,3)) # médias móveis
+plot.ts(v, col = "red", ylim = c(-8,8), main = "gráfico suavizado I")
+
+vb = filter(xb, sides=2, rep(1/3,3)) # médias móveis
+plot.ts(vb, col = "black", ylim = c(-8,8), main = "gráfico suavizado II")
+
+v1 <- plot.ts(vb, col = "black", ylim = c(-8,8))
+par(new = TRUE)
+v2 <- plot.ts(v, col = "red", ylim = c(-8,8))
+par(new = F)
+```
+
+# Questão 2
+```{r}
+w = rnorm(150,0,1) # 50 extras para evitar problemas de inicialização
+x = filter(w, filter=c(-.9), method="recursive")[-(1:50)] # removendo os primeiros 50
+x_2plot <- plot.ts(x, xlab="Tempo", main="Autoregressão questão 2")
+
+v_2 <- filter(x, sides = 1, rep(1/4,4))
+V_2plot<- plot.ts(v_2, col = "red", ylim = c(-8,8), main = "gráfico suavizado I")
+
+
+x_2plot <- plot.ts(x, ylim = c(-8,8))
+par(new = T)
+V_2plot<- plot.ts(v_2,ylab = "", col = "red", ylim = c(-8,8), main = "Sobreposto", type = "o")
+par(new = F)
+
+```
+
+Suavisou a função de mais, neste ponto não é possível se obter informações sobre o comportamento da série.
+
+## b)
+
+```{r}
+c <- c(cos((2*pi*1:100)/4))
+plot.ts(c)
+
+Vt_b <- filter(c, sides = 1, rep(1/4,4)) # Criação de média móvel
+plot.ts(Vt_b)
+
+plot.ts(c, ylim = c(-1,1))
+par(new = T)
+plot.ts(Vt_b, ylim = c(-1,1),
+        type = "o",
+        ylab = "",
+        main = "Sobrepostos",
+        col = 2)
+```
+A suavisação foi tão forte que se perdeu completamente o padrão apresentado pela função $$ X_t $$
+
+## c) 
+
+```{r}
+c <- c(cos((2*pi*1:100)/4))
+x <- rnorm(100,0,1)
+xt_c <- c + x
+plot.ts(xt_c)
+
+Vt_c <- filter(xt_c, sides = 1, rep(1/4,4)) # Criação de média móvel
+plot.ts(Vt_c)
+
+plot.ts(xt_c, ylim = c(-4,4))
+par(new = T)
+plot.ts(Vt_c, ylim = c(-4,4),
+        type = "o",
+        ylab = "",
+        main = "Sobrepostos",
+        col = 2)
+```
+A série num geral ficou bem errática, não encontrei nenhuma comparação no material que se compare, porém a suavisação aqui não pareceu diminuir suficientemente o padrão da série.
+
+## d)
+
+Tanto no caso a) quanto no caso c) tivemos situações em que houve um aumento repentino na variância da série, podendo indicar um evento porém a média móvel não conseguiu captar essa mudança.
+
+```{r}
+Vt_c2 <- filter(xt_c, sides = 2, rep(1/3,3)) # Criação de média móvel
+plot.ts(Vt_c2)
+
+plot.ts(xt_c, ylim = c(-4,4))
+par(new = T)
+plot.ts(Vt_c2, ylim = c(-4,4),
+        type = "o",
+        ylab = "",
+        main = "Média móvel centrada",
+        col = 2)
+```
+
+Enquanto a criação da média móvel centrada em zero como no exemplo I.13 vêmos uma série melhor descrita utilizando a média móvel centrada em 0.
+
+#Questão 3
+
+$$E[X_t] = E[X_sX_t - X_s\mu_t - X_t\mu_s+\mu_s\mu_t] $$
+$$= E[X_sX_t] - E[X_s\mu_t] - E[X_t\mu_s] + E[\mu_s\mu_t]$$
+$$= E[X_sX_t] -\mu_t\mu_s - \mu_s\mu_t +  \mu_s\mu_t$$
+$$ = E[X_sX_t] - \mu_t\mu_s $$ 
+
+#Questão 4
+```{r}
+w4 = rnorm(250,0,1) # 50 extras para evitar problemas de inicialização
+x4 = filter(w, filter=c(-.9), method="recursive")[-(1:50)] # removendo os primeiros 50
+
+
+xbar_4 <- sum(x4)/ length(x4) #Função de médias
+x <- 1:200
+
+df <- data.frame(x = x, y = xbar_4)
+plot.ts(x4)
+with(df, lines(y ~ x), col = 'red')
+
+acf(x4)
+```
+
+# Questão 5
+
+$$ X_t = \beta_0 + \beta_1t + W_t  $$ 
+$$E[X_t] = E[\beta_0] + E[\beta_1t] + E[W_t]$$ 
+
+$$ E[X_t] = \beta_0+\beta_1t + 0  $$
+Como a esperança depende do instante $ t $ a série não pode ser estacionária
+
+#b
+
+$$\beta_0 + \beta_1t + W_t  - (\beta_0 + \beta_1(t - 1) + W_(t-1))$$ 
+$$ \beta_0 + \beta_1t + W_t  - (\beta_0 + \beta_1t - \beta_1 + W_{t-1}) $$
+
+$$ Y_t =  \beta_1 + W_t + W_{t-1} $$
+
+$$ E[Y_t] = \beta_1 + 0 + 0 $$
+
+Como a esperança não depende de $ t $ a série poderá ser considerada estacionária se a covariância depender de $|s-t|$}
+$$Cov [s,t] = E[(\beta_0 + W_s - W_{s-1} - \beta_0)*(\beta_0 + W_t - W_{t-1})]  $$
+$$  E[(W_s - W_{s-1}) * (W_t - W_{t-1})] $$
