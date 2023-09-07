@@ -159,7 +159,32 @@ df <- data.frame(x = x, y = xbar_4)
 plot.ts(x4)
 with(df, lines(y ~ x), col = 'red')
 
+
+```
+
+```{r echo=FALSE}
 acf(x4)
+```
+
+```{r}
+c <- c(cos((2*pi*1:100)/4))
+x <- rnorm(100,0,1)
+xt_c <- c + x
+plot.ts(xt_c)
+
+Vt_c <- filter(xt_c, sides = 1, rep(1/4,4)) # Criação de média móvel
+plot.ts(Vt_c)
+
+x <- 1:100
+Vt_c<- tidyr::replace_na(Vt_c, 0)
+vt_c_bar <- sum(Vt_c)/length(Vt_c)
+df <- data.frame(x = x, y = vt_c_bar)
+plot.ts(Vt_c)
+with(df, lines(y ~ x), col = 'red')
+
+```
+```{r echo=FALSE}
+acf(Vt_c)
 ```
 
 # Questão 5
@@ -191,7 +216,9 @@ a) Não é estacionário
 b) É estacionário
 
 ## c)
-A substituição de uma constante por outra não irá influenciar no resultado para a primeira necessidade de estacionáriedade, estaremos substituindo $E[W_t] = 0$ por $E[Y_t] = \mu_y$ que continua não dependendo de $t$ e a função de covariância será de $ \gamma_y(s)*\gamma_y(t)$ podendo ser escrito em função da posição de $s$ e $t$, portanto a série continua sendo estacionário
+A substituição de uma constante por outra não irá influenciar no resultado para a primeira necessidade de estacionáriedade, estaremos substituindo $E[W_t] = 0$ por $E[Y_t] = \mu_y$ que continua não dependendo de $t$ e a função de covariância será de:
+$$ \gamma_y(s)*\gamma_y(t)$$ 
+podendo ser escrito em função da posição de $s$ e $t$, portanto a série continua sendo estacionário
 
 # Questão 7
 ## a)
@@ -232,6 +259,33 @@ O ideal era demonstrar os qqplots porém não consegui rodar o código para demo
 acf(logvarve, lag.max = 600)
 ```
 
-Olhando com um lag de 600 vemos mudanças de influencia para negativa em torno de 100 a 350 anos atrás, enquanto no resto da série é demonstrado uma ifluencia positiva, bem alta nos ultimos 100 anos.
+Olhando com um lag de 600 vemos mudanças de inf+luencia para negativa em torno de 100 a 350 anos atrás, enquanto no resto da série é demonstrado uma ifluencia positiva, bem alta nos ultimos 100 anos.
 
+##d)
+```{r}
+ut <- numeric(length(logvarve))
+for (i in 2:length(ut)) {
+  ut[i] <- logvarve[i] - logvarve[i-1]  
+}
 
+ut <- ut[-1] #Remover o zero inicial
+
+plot.ts(ut)
+```
+
+```{r}
+
+data.frame(
+"media" = mean(ut),
+"Media primeira metade" = mean(ut[1:(length(ut)/2)]),
+"Media segunda metade" = mean(ut[((length(ut)+2)/2):length(ut)]) )
+```
+
+Dá para notar, pelo gráfico e pela tabela que a média da série samba em torno do zero, parecendo uma certa estacionáriedade.
+
+```{r echo=FALSE}
+acf(ut, lag.max = 100)
+```
+
+O ACF amostral demonstra que a série só depende dos ultimos 2 instantes e pouco do resto da série, um compartamenento esperado dada a transformação feita em Ut.
+Como a série varve já demonstra uma variação de um tempo em relação ao anterior da espessura da areia recolhida, a utilização do Log transforma a variável resposta para uma resposta a nível de escala log, e comparar a diferença de dois tempos numa escala diferente da resposta não me deixou muitas pistas de qual seria a interpretação da série Ut
