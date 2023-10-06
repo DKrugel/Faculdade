@@ -1,0 +1,44 @@
+---
+title: "Trabalho 2"
+author: "Daniel Krügel"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include=FALSE}
+library(astsa)
+library(forecast)
+```
+
+#Questão 30
+
+```{r echo=TRUE}
+data <- log(varve) #Salvando a transformações dos dados
+#Ajustando com os diferentes Alphas
+HW025 <- HoltWinters(data, alpha = 0.25, beta = FALSE, gamma = FALSE)
+HW050 <- HoltWinters(data, alpha = 0.50, beta = FALSE, gamma = FALSE)
+HW075 <- HoltWinters(data, alpha = 0.75, beta = FALSE, gamma = FALSE)
+```
+
+```{r}
+data.frame("0.25" = HW025$coefficients,
+                 "0.50" = HW050$coefficients,
+                 "0.75" = HW075$coefficients)
+
+```
+
+```{r}
+par(mfrow = c(1,3))
+plot(HW025)
+plot(HW050)
+plot(HW075)
+```
+
+Apesar dos coeficientes gerados pelo algoritmo de HoltWinters serem extremamente próximos, podemos ver o efeito pesado da suavisação duplicando e triplicando o coeficiente Alpha pelos gráficos
+
+
+
