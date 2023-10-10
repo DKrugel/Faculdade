@@ -14,6 +14,43 @@ library(astsa)
 library(forecast)
 ```
 
+# Questão 10
+
+```{r}
+data <- cmort
+acf2(data)
+```
+
+```{r}
+#Utilizando a fórmula descrita no exemplo III.19
+(regr <- ar.ols(data, order = 2, demean = F,intercept = F))
+#Semana 1
+sem1 <- cmort[length(cmort)] * regr$ar[1] + cmort[length(cmort)-1] * regr$ar[2]
+
+#Semana 2
+sem2 <- sem1 * regr$ar[1] + cmort[length(cmort)] * regr$ar[2]
+
+#Semana 3
+sem3 <-  sem2 * regr$ar[1] + sem1 * regr$ar[2]
+
+#Semana 4
+sem4 <-  sem3 * regr$ar[1] + sem2 * regr$ar[2]
+
+
+#Utilizando predict
+data.frame("predict" = predict(regr, n.ahead = 4)$pred, "se" = predict(regr, n.ahead = 4)$se, "formula" = c(sem1,sem2,sem3,sem4))
+```
+
+# Questão 18
+
+```{r}
+#Regressão Yule - walker
+(rec.yw = ar.yw(data, order=2))
+
+(estimativas <- data.frame(OLS = c(regr$ar),
+                 "Yule-Walker" = c(rec.yw$ar)))
+```
+
 #Questão 30
 
 ```{r echo=TRUE}
@@ -40,5 +77,68 @@ plot(HW075)
 
 Apesar dos coeficientes gerados pelo algoritmo de HoltWinters serem extremamente próximos, podemos ver o efeito pesado da suavisação duplicando e triplicando o coeficiente Alpha pelos gráficos
 
+# Questão 32
 
+```{r}
+data <- oil
+plot(data)
+```
+```{r}
+# Ajustando Arima(0,1,1)
+ARIMA011<- arima(data, order = c(0,1,1))
 
+RESID.011 <- checkresiduals(ARIMA011)
+```
+
+Para um primeiro ajuste está rasoável, os resíduos são aproximadamente normais, os resíduos está em torno do zero, porém o ACF está bem irregular.
+
+```{r}
+#Utilizando o algoritmo auto.arima, minimizando soma de quadrados condicionais
+ARIMAAUTO <- auto.arima(data)
+
+(RESID.AUTO <- checkresiduals(ARIMAAUTO))
+
+(df <- data.frame(
+RESID.011$p.value,
+RESID.AUTO$p.value
+))
+```
+
+Curiosamente podemos ver a saída da função checkresiduals() já nos fornece o pvalor do teste Ljung-Box no qual podemos ver a maldição de adicionarmos mais parâmetros nos modelos autoregressivos, onde o maior grau de liberdade, do modelo, contribuiu para um pvalor maior que o modelo ARIMA(0,1,1), mais simples.
+
+Se eu fosse escolher um dos modelos utlizaria o gerado pelo auto.arima(), o ACF demonstrou um comportamento mais concentrado nas bandas de confiança e uma enfase maior nos meses mais próximas do evento, além disso os resíduos se aproximam mais de zero pelo que me aparenta.
+
+# Questão 34
+
+```{r}
+dados <- so2
+
+ARIMA011 <- arima(dados,order = c(0,1,1))
+checkresiduals(ARIMA011)
+
+ARIMA111 <- arima(dados,order = c(1,1,1))
+checkresiduals(ARIMA111) # Aumento de um grau no processo auto regressivo fez o resultado do Ljung-Box indicar afastamento da normalidade dos residuos
+
+ARIMA012 <- arima(dados,order = c(0,1,2))
+checkresiduals(ARIMA012)
+
+ARIMA021 <- arima(dados,order = c(0,2,1))
+(RES021 <- checkresiduals(ARIMA021)) # Modelo escolhido
+RES021$p.value # p valor adquirido no teste Ljung Box
+```
+ O modelo que não utiliza ordem de auto regressão, e usando o operador de segunda ordem de diferenciação nas médias móveis apresentou a melhor modelagem para os dados de So2. 
+
+```{r}
+predict(ARIMA021, n.ahead = 4)
+```
+
+# Questão 36
+## A)
+```{r}
+DADOS <- cpg
+plot(y = DADOS, x = c(1980:2008))
+```
+
+Como mencionado no enunciado, vemos que o preço por GB de armazenamento decaiu extremamente rápido do inicio da decada de 80 até o ano de 95
+
+## B)
