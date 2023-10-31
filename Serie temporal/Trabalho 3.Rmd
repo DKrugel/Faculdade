@@ -1,0 +1,87 @@
+---
+title: "Trabalho 3 relatório"
+author: "Daniel Krügel"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(astsa)
+library(tidyverse)
+library(seewave)
+```
+
+#Questão 9
+
+```{r}
+dados <- sunspotz
+
+(A.E <- mvspec(dados, log="no"))
+```
+
+
+```{r}
+df <- A.E$details #Salvando o vetor de Espectros
+
+df[which(df[,3] == max(df[,3])),] # plotando qual a frequencia que representa o pico observado no gráfico
+
+```
+Observamos que a frequência que representa o maior spectro no períodograma pe de 0.0917, vamos calcular a quantidade de tempo que leva para fecharmos um ciclo da sazonalidade
+
+```{r}
+(freq <- 1/0.0917)
+```
+
+Representando algo em torno de 11 anos, vamos ver se faz sentido.
+
+```{r}
+plot(dados)
+```
+
+Plotando a série temporal vemos que a cada 10 anos temos um fechamento de mais ou menos 5 ciclos, o que bate com a informação calculada de frequência.
+
+## Intervalo de confiança
+
+Começo retirando quantos graus de liberdade o modelo apresenta:
+```{r}
+A.E$df #Que ajuda que o pacote dá já salvando essa informação para a gente!
+```
+Vou truncar de 1.9 para 2
+
+```{r}
+#Calculando os valores de referencia da chiquadrado
+qchisq(0.025, 2)
+qchisq(0.975, 2)
+```
+
+Formando o vetor para o intervalo de confiança:
+```{r}
+c(2*(freq/qchisq(0.975, 2)) ,2*(freq/qchisq(0.025, 2))) #Pouca coisa de amplitude
+```
+
+Com um intervalo tão amplo, fica difícil de dar algum significado ao intervalo de confiança
+
+#Questão 20
+
+```{r}
+dados <- climhyd
+
+#Realizando as transformações pedidas no enunciado
+PRECIPTRANS <- sqrt(dados$Precip)
+fit01 <- sarima(PRECIPTRANS, 0,0,0, 0,1,1,12, details = F)
+
+INFLUXTRANS <- log(dados$Inflow)
+fit02 <- sarima(INFLUXTRANS, 0,0,0, 0,1,1,12, details = F)
+```
+
+```{r}
+# Construindo os gráficos de Coerencia
+mvspec(cbind(INFLUXTRANS, PRECIPTRANS), plot.type = "coh", spans = c(7,7))
+mvspec(cbind(INFLUXTRANS, dados$CldCvr), plot.type = "coh", spans = c(7,7)) #Alguma coerencia
+mvspec(cbind(INFLUXTRANS, dados$Temp), plot.type = "coh", spans = c(7,7))
+mvspec(cbind(INFLUXTRANS, dados$DewPt), plot.type = "coh", spans = c(7,7))
+mvspec(cbind(INFLUXTRANS, dados$WndSpd), plot.type = "coh", spans = c(7,7)) 
+```
+
+Como visto na análise gráfica podemos ver que apenas a Precipitação transformada 
