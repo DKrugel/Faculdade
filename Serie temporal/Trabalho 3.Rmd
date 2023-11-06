@@ -10,14 +10,15 @@ knitr::opts_chunk$set(echo = TRUE)
 library(astsa)
 library(tidyverse)
 library(seewave)
+library(ggcorrplot)
 ```
 
-#Questão 9
+# Questão 9
 
 ```{r}
 dados <- sunspotz
 
-(A.E <- mvspec(dados, log="no"))
+A.E <- mvspec(dados, log="no")
 ```
 
 
@@ -62,7 +63,7 @@ c(2*(freq/qchisq(0.975, 2)) ,2*(freq/qchisq(0.025, 2))) #Pouca coisa de amplitud
 
 Com um intervalo tão amplo, fica difícil de dar algum significado ao intervalo de confiança
 
-#Questão 20
+# Questão 20
 
 ```{r}
 dados <- climhyd
@@ -77,6 +78,7 @@ fit02 <- sarima(INFLUXTRANS, 0,0,0, 0,1,1,12, details = F)
 
 ```{r}
 # Construindo os gráficos de Coerencia
+
 mvspec(cbind(INFLUXTRANS, PRECIPTRANS), plot.type = "coh", spans = c(7,7))
 mvspec(cbind(INFLUXTRANS, dados$CldCvr), plot.type = "coh", spans = c(7,7)) #Alguma coerencia
 mvspec(cbind(INFLUXTRANS, dados$Temp), plot.type = "coh", spans = c(7,7))
@@ -84,4 +86,110 @@ mvspec(cbind(INFLUXTRANS, dados$DewPt), plot.type = "coh", spans = c(7,7))
 mvspec(cbind(INFLUXTRANS, dados$WndSpd), plot.type = "coh", spans = c(7,7)) 
 ```
 
-Como visto na análise gráfica podemos ver que apenas a Precipitação transformada 
+Como visto na análise gráfica podemos ver que apenas a Precipitação transformada apresenta uma coerencia próxima de 1.0, além disso a cobertura de núvens apresenta uma coesão próxima de 1.0, o que faz sentido dada a alta correlação de precipitação de chuvas e cobertura de núvens
+
+```{r}
+#Correlação
+cor(PRECIPTRANS,dados$CldCvr)
+#Teste de correlação
+cor_pmat(cbind(PRECIPTRANS,dados$CldCvr))
+```
+
+## Ajustando uma regressão defasada
+
+```{r}
+defasada <- LagReg(INFLUXTRANS, PRECIPTRANS)
+```
+
+Como demonstrado no terceiro gráfico, a linha azul "segue" a linha pontilhada, indicando assim que o modelo utilizando a Precipitação Transformada tem um poder preditivo bom para a variável de Influxo transformado
+
+# Questão 29
+
+## Análise espectrais
+
+```{r}
+mvspec(prodn, log = "n")
+mvspec(prodn, log = "y")
+```
+
+Para o calculo da frequencia vou seguir os mesmos passos da questão 9
+
+```{r}
+# Para produção
+A.E <- mvspec(prodn, log="no")
+
+df <- A.E$details
+
+df[which(df[,3] == max(df[,3])),]
+```
+
+```{r}
+(freq <- 1/0.032)
+
+#Intervalo de confiança
+c(2*(freq/qchisq(0.975, A.E$df)) ,2*(freq/qchisq(0.025, A.E$df))) 
+```
+
+
+```{r}
+# Para desemprego
+A.E2 <- mvspec(unemp, log="no")
+
+df2 <- A.E2$details
+
+df2[which(df2[,3] == max(df2[,3])),]
+
+```
+
+```{r}
+(freq2 <- 1/0.064)
+
+#Intervalo de confiança
+c(2*(freq2/qchisq(0.975, A.E2$df)) ,2*(freq2/qchisq(0.025, A.E2$df))) 
+```
+
+
+## C)
+```{r}
+dados <- prodn
+Ut <- stats::filter(dados,
+                        sides = 1,
+                        filter = -1,
+                        init = 1,
+                        method =  "recursive")
+
+
+Vt <- stats::filter(Ut,
+                        sides = 1,
+                        filter = -1,
+                        init = 12,
+                        method =  "recursive")
+
+plot(Ut, main = "prodn"); plot(Vt, main = "prodn")
+```
+
+Para produção conseguimos observar o "boom" do pós guerra na produção do país, tanto na nossa série auto regressiva Ut quando Vt
+
+```{r}
+dados <- unemp
+Ut <- stats::filter(dados,
+                    sides = 1,
+                    filter = -1,
+                    init = 1,
+                    method =  "recursive")
+
+
+Vt <- stats::filter(Ut,
+                    sides = 1,
+                    filter = -1,
+                    init = 12,
+                    method =  "recursive")
+
+plot(Ut, main = "unemp")
+plot(Vt, main = "unemp")
+```
+
+Para desemprego vemos dois comportamentos distintos, em Ut percebemos uma diminuição na década de 70 adiante, enquanto em Vt vemos um aumento contínuo apartir da década de 50
+
+Não podemos afirmar que há um padrão de estacionáriedade em nenhuma dessas séries, dada a variância inconstante da base.
+
