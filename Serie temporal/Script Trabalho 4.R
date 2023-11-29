@@ -47,6 +47,55 @@ df2 <- data.frame("Y" = y[1:10],
 
 y = aggregate(unemp, nfrequency = 4, FUN = mean) # Fornecido pelo enunciado
 
+num = length(y)
+A = cbind(1,1,0,0)
+# Função para calcular a verossimilhança
+Linn =function(para){
+  Phi = diag(0,4); Phi[1,1] = para[1]
+  Phi[2,]=c(0,-1,-1,-1); Phi[3,]=c(0,1,0,0); Phi[4,]=c(0,0,1,0)
+  cQ1 = para[2]; cQ2 = para[3] # raiz quadrada de q11 e q22
+  cQ = diag(0,4); cQ[1,1]=cQ1; cQ[2,2]=cQ2
+  cR = para[4] # raiz quadrada de r11
+  kf = Kfilter(jj, A, mu0, Sigma0, Phi, cQ, cR)
+  return(kf$like) }
+
+# Parâmetros iniciais
+mu0 = c(.7,0,0,0); Sigma0 = diag(.04,4)
+init.par = c(1.03,.1,.1,.5) # Phi[1,1], 2 cQs e cR
+# Estimação e resultados
+est = optim(init.par, Linn,NULL, method='BFGS', hessian=TRUE, control=list(trace=1,REPORT=1))
+
+SE = sqrt(diag(solve(est$hessian)))
+u = cbind(estimate=est$par, SE)
+rownames(u)=c('Phi11','sigw1','sigw2','sigv'); u
+
+# Alisamento
+Phi = diag(0,4); Phi[1,1] = est$par[1]
+Phi[2,]=c(0,-1,-1,-1); Phi[3,]=c(0,1,0,0); Phi[4,]=c(0,0,1,0)
+cQ1 = est$par[2]; cQ2 = est$par[3]
+cQ = diag(1,4); cQ[1,1]=cQ1; cQ[2,2]=cQ2
+cR = est$par[4]
+ks = Ksmooth(y,A,mu0,Sigma0,Phi,cQ,cR)
+# Gráficos
+Tsm = ts(ks$Xs[1,,], start=1948, freq=4)
+Ssm = ts(ks$Xs[2,,], start=1948, freq=4)
+p1 = 3*sqrt(ks$Ps[1,1,]); p2 = 3*sqrt(ks$Ps[2,2,])
+par(mfrow = c(2,1), mar=c(3,3,1,1), mgp=c(1.6,.6,0), cex=0.9, pch=19)
+plot(Tsm, main='Componente de tend&ecirc;ncia', xlab="Tempo", ylab='Tend&ecirc;ncia')
+xx = c(time(y), rev(time(y)))
+yy = c(Tsm-p1, rev(Tsm+p1))
+polygon(xx, yy, border=NA, col=gray(.5, alpha = .3))
+
+
+grid()
+plot(y, main='Dados & Tendência + Sazolidade', xlab="Tempo",ylab='Johnson & Johnson')
+xx = c(time(y), rev(time(y)) )
+yy = c((Tsm+Ssm)-(p1+p2), rev((Tsm+Ssm)+(p1+p2)) )
+polygon(xx, yy, border=NA, col=gray(.5, alpha = .3))
+grid()
+
+polygon(xx,yy,  col=gray(.5, alpha = 2))
+
 # Questão 23
 
 library(depmixS4)

@@ -7,7 +7,7 @@ output: pdf_document
 
 
 # Introdução
-O artigo "Depression, Internet Gaming Disorder, and the Moderationg Effect of the Gamer-Avatar Relationship: an Exploratory Longitudinal Study" publicado na revista "International Journal of Mental Health and Addiction" tendo como autores: Tyrone L. Burleigh; Vasilis Stavropoulos; Lucas W. L. Liew; Baxter L. M. Adams; Mark D. Griffiths. Utiliza um estudo longitudinal com o intuíto principal modelar o efeito da variável GAR (Nível de identificação de jogadores com os seus avatares online) interagindo com a variável depression score (Resultado do questionário Beck Depression Inventory - Second Edition, que ranqueia a severidade dos sintomas depressivos nas ultimas duas semanas) 
+O artigo "Depression, Internet Gaming Disorder, and the Moderationg Effect of the Gamer-Avatar Relationship: an Exploratory Longitudinal Study" publicado na revista "International Journal of Mental Health and Addiction" tendo como autores: Tyrone L. Burleigh; Vasilis Stavropoulos; Lucas W. L. Liew; Baxter L. M. Adams; Mark D. Griffiths. Utiliza um estudo longitudinal com o intuíto principal modelar o efeito da variável GAR (Nível de identificação de jogadores com os seus avatares online) interagindo com a variável depression score (Resultado do questionário Beck Depression Inventory - Second Edition, que ranqueia a severidade dos sintomas depressivos nas ultimas duas semanas) com variável resposta como IGD (Internet Gaming Disorder)
 
 # Coleta de dados
 Os dados são coletados através de 3 questionários que avaliam:
@@ -18,7 +18,9 @@ Os dados são coletados através de 3 questionários que avaliam:
 
 E foi realizado a coleta de duas formas, em uma coleta online em um unico tempo, e da segunda forma "face-to-face" em coletas presenciais em três tempos, realizadas em intervalos de mês em mês. 
 
-* Inserir tabela da amostra *
+![Tabela amostral]("/home/krugel/Faculdade/Analise de dados longitudinais/Imagens/Amos.jpeg")
+
+\newpage
 
 # Problemas
 O principal tema do artigo é sobre a relação do jogador com o seu avatar em jogos online de MMOs e MMORPGs e como isso afeta o seu grau de IGD, a outra pergunta a ser respondida é se o grau de severidade de depressão indica um aumento no vício em jogos online.
@@ -26,7 +28,7 @@ O principal tema do artigo é sobre a relação do jogador com o seu avatar em j
 # Metodologia
 O Estudo começa avaliando se faz sentido utilizar os resultados dos questionários para estimar a IGD e se há relacionamento entre eles, através de um estudo de correlações foi identificado que as variáveis tem correlações significativas e positivas entre sí.
 
-* Inserir tabela de correlações *
+![Tabela de correlações]("/home/krugel/Faculdade/Analise de dados longitudinais/Imagens/cor.jpeg")
 
 Em seguida é avaliado se o IGD é bem estimado tanto pelo grau de severidade de depressão, quanto pelo grau de associação com o avatar online através de estudos transversais utilizando tanto a base de avaliações presenciais quanto as avaliações online. Então é ajustado um modelo longitudinal dado pela seguinte fórmula: $IGD_{scores} = a +\beta_1DepressionScores(T_1) + \beta_2GARScores(T_2) + \beta_3[Depression Scores(T_1) \times GARScores(T_2)]$ 
 
@@ -46,4 +48,14 @@ Ou seja para cada Score de identificação com o avatar em jogos online estimado
 E finalmente para o mais interessante
 $IGD_{scores} = a +\beta_1DepressionScores(T_1) + \beta_2GARScores(T_2) + 0.02[Depression Scores(T_1) \times GARScores(T_2)]$ 
 
-A estimativa de $\beta_3$ é equivalente a 0.02, o que pelo modelo dá a entender que é uma adição muito superficial a resposta média esperada
+A estimativa de $\beta_3$ é equivalente a 0.02, o que pelo modelo dá a entender que é uma adição muito superficial a resposta média esperada porém quando olhamos o efeito marginal da variável em relação a resposta IGD vêmos a influência dela na resposta
+
+
+![Efeitos marginais]("/home/krugel/Faculdade/Analise de dados longitudinais/Imagens/marg.jpeg")
+
+\newpage
+# Críticas
+
+Os autores suportam suas escolhas de modelos em outros artigos, não nas peculiaridades dos dados em sí. Outro ponto a ser levantado é a ausência dos modelos específicados, fazendo com que as análises tenham uma compreensão ambígua. Além disso algumas inferências dos autores são feitas apartir da interpretação dos betas dos modelos lineares e as conclusões são escritas na forma de incremento de chances, o que não é suportado por este modelo.
+
+Algumas inferencias foram feitas com base em inferencia causal, de maneira errônea, pois os modelos ajustados não podem inferir causa, da maneira que foram apresentados.
