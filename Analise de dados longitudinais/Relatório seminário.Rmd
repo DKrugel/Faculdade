@@ -1,0 +1,68 @@
+---
+title: "Relatório Seminário"
+author: "Caio Gomes Alves e Daniel Krügel"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+# Problema a ser estudado
+
+O artigo "Depression, Internet Gaming Disorder, and the Moderationg Effect of the Gamer-Avatar Relationship: an Exploratory Longitudinal Study" publicado na revista "International Journal of Mental Health and Addiction" tendo como autores: Tyrone L. Burleigh; Vasilis Stavropoulos; Lucas W. L. Liew; Baxter L. M. Adams; Mark D. Griffiths. Utiliza um estudo longitudinal com o intuíto principal modelar o efeito da variável GAR (Nível de identificação de jogadores com os seus avatares online) interagindo com a variável depression score (Resultado do questionário Beck Depression Inventory - Second Edition, que ranqueia a severidade dos sintomas depressivos nas ultimas duas semanas) com variável resposta como IGD (Internet Gaming Disorder)
+
+
+# Quais perguntas foram respondidas?
+
+Internet Gamind Disorder é influenciada por sintomas depressivos? O relacionamento tóxico com o seu personagem virtual afeta o comportamento de uma pessoa?
+
+
+# Caracterização da população investigada
+
+A população estudada é a de jogadores que apresentam sintomas de IDG, mais específicamente, foi recolhida uma amostra de jovens adultos australianos (18-29 anos) que jogam RPGs e/ou MMORPGs.  
+
+![Tabela amostral]("Amos.jpeg")
+
+\newpage
+
+# Métodos adotados
+
+Para a amostragem foram utilizados 3 questionários
+
+- IGDS-SF9 - Avalia Internet Gaming Disorder(IGD)
+- BDI-II - Avalia grau de severidade de depressão 
+- SPQ - Avalia o grau de identificação com o avatar utilizado em jogos online
+
+Foram escolhidas estes 3 questionários dado a alta correlação entre eles e pela recomendação de artigos referênciados pelos autores.
+
+![Tabela de correlações]("cor.jpeg")
+
+Em seguida foi ajustado regressões para a avaliação da relação entre os Scores de IGD e os scores obtidos no questionário BDI-II
+
+A regressão tomou a seguinte forma:
+
+$$IGD_{score} = \beta_0 + 0.43(\pm0.06)\times DepressionScore$$
+
+Ou seja para cada Score de Depressão estimado pelo questionário, é esperado um aumento de $0.43(\pm0.06)$ na média de Scores de Internet Gaming Disorder. O P valor obtido foi de $p < .001$ para o $\beta_1$
+
+Para a segunda hipótese:
+  $$IGD_{score} = \beta_0 + 0.21(\pm0.09)\times GARScore$$
+Ou seja para cada Score de identificação com o avatar em jogos online estimado pelo questionário, é esperado um aumento de $0.21(\pm0.09)$ na média de Scores de Internet Gaming Disorder.
+
+E utilizando a interação entre o depressionScore e GARScore temos:
+$$IGD_{scores} = a +\beta_1DepressionScores(T_1) + \beta_2GARScores(T_2) + 0.02[Depression Scores(T_1) \times GARScores(T_2)]$$
+
+O p valor encontrado para o $\beta_3$ foi de $p = .02$ 
+
+Utilizando esse modelo eles olharam para o efeito marginal de GAR no seguinte gráfico: 
+
+![Efeitos marginais]("marg.jpeg")
+
+# Conclusões
+
+Foi encontrado que sintomas depressivos mais graves e níveis de GAR mais altos estão associados a um aumento em comportamentos associados a IGD.
+
+
+# Análise critica
+
+Os autores suportam suas escolhas de modelos em outros artigos, não nas peculiaridades dos dados em sí. Outro ponto a ser levantado é a ausência dos modelos específicados, fazendo com que as análises tenham uma compreensão ambígua. Além disso algumas inferências dos autores são feitas apartir da interpretação dos betas dos modelos lineares e as conclusões são escritas na forma de incremento de chances, o que não é suportado por este modelo.
+
+Algumas inferencias foram feitas com base em inferencia causal, de maneira errônea, pois os modelos ajustados não podem inferir causa, da maneira que foram apresentados.

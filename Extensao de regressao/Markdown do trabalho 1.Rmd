@@ -1,0 +1,222 @@
+---
+title: "Trabalho 1"
+author: "Caio Gomes Alves e Daniel Krügel"
+date: "2023-11-15"
+output: pdf_document
+documentclass: report
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Descritiva
+```{r message=FALSE, warning=FALSE}
+require(car)
+require(tidyverse)
+require(forecast)
+```
+
+
+Escolhemos os dados presentes no pacote "car", chamado "Prestige". Escolhemos esse conjunto de dados por seu fácil acesso e rápida compreensão das variáveis. 
+```{r}
+dados  <- (Prestige)
+head(dados)
+```
+```{r}
+summary(dados)
+```
+Estaremos ajustando como variável resposta a variável "Prestige" e como variável explicativa a variável "Income".
+Na documentação do pacote encontramos as seguintes definições:
+
+Income - Average income of incumbents, dollars, in 1971.
+
+Prestige - Pineo-Porter prestige score for occupation, from a social survey conducted in the mid-1960s.
+
+Vamos montar um gráfico de dispersão para ver o rosto das nossas variáveis:
+
+```{r echo=FALSE}
+plot(dados$income, dados$prestige, 
+     xlab = "Income", ylab = "Prestige")
+```
+Agora que já vimos qual a cara dos nossos dados, vamos começar a ajustar algumas regressões vistas na disciplina.
+
+\newpage
+# Regressão linear
+
+Vamos começar ajustando uma reta, sem mais de longas nos dados e ver como ela se saí:
+
+```{r}
+fit01 <- lm(prestige ~ income, data = dados )
+
+summary(fit01)
+```
+Vemos que o modelo aparece com um p valor significativo da estatística F, podendo sugerir que fornece um bom ajuste
+Porém os R quadrado e R quadrado ajustado aparecem relativamente baixos.
+
+```{r}
+
+plot(dados$income, dados$prestige, 
+     xlab = "Income", ylab = "Prestige", main = "Regressão linear simples")
+abline(coef(fit01), col = 2)
+```
+Quando colocamos a regressão em cima dos pontos vêmos o motivo, a reta ficou sobreposta de forma grosseira em cima dos dados.
+
+Para contra balancear vamos ver os modelos polinomiais e dar uma certa maleada nesta curva.
+
+\newpage
+# Modelo Polinomial
+
+```{r}
+fit02 <- lm(prestige ~ income + I(income^2) ,data = dados )
+summary(fit02)
+```
+Aqui já conseguimos ver uma melhora no R quadrado, vamos ver como isso reflete no nosso diagrama de dispersão:
+
+```{r}
+plot(dados$income, dados$prestige, 
+     xlab = "Income", ylab = "Prestige", main = "Regressão polinomial de ordem 2")
+
+nd <- data.frame(income = 1:25000)
+nd$y <- predict(fit02, nd)
+with(nd, lines(y ~ income, col=1))
+
+```
+
+Aqui já vimos uma melhora considerável em relação ao modelo linear anterior, o modelo polinomial conseguiu pegar a curvatura dos dados.
+
+Vamos ajustar alguns modelos de ordem maior para tentar fazer um overfitting dos dados e comparálo
+
+```{r}
+fit03 <- lm(prestige ~ poly(income, 12),data = dados )
+nd2 <- data.frame(income = 1:25000)
+nd2$y <- predict(fit03, nd2)
+```
+
+
+
+```{r}
+plot(dados$income, dados$prestige, 
+     xlab = "Income", ylab = "Prestige", main = "Regressão polinomial de ordem 12")
+
+with(nd2, lines(y ~ income, col=2))
+```
+Legal, agora vamos ver se adiantou de algo colocar tantos graus na nossa regressão. 
+Como os modelos são encaixados, posso testar via anova se a diferença entre os dois é significativa ou não:
+
+```{r}
+anova(fit02, fit03)
+```
+A diferença dos resíduos apareceu com uma estatística F não significativa, ou seja, os modelos são iguais, portanto ficaremos com o modelo polinomial de ordem 2 para a nossa regressão e diremos que ele é o melhor modelo para esta categoria.
+
+\newpage
+# Transformação Box Cox
+
+A ideia é transformar o modelo linear inicial com a sugestão do método box cox para tentarmos um ajuste mais digno
+
+```{r echo=FALSE}
+bcox <- MASS::boxcox(fit01)
+
+```
+A transformação ficou próxima de 1, o que indica que provavelmente não é necessária a transformação, mas vamos realizá-la para testes
+
+```{r}
+lambda <- bcox$x[which.max(bcox$y)]
+
+dados $income_boxcox <- ((dados $income^lambda) - 1)/lambda
+
+fit0bc <- lm(prestige ~ income_boxcox, data = dados ) 
+
+```
+
+A transformação é dada por: $(income^\lambda - 1)/\lambda$
+
+```{r}
+
+plot(dados $income_boxcox, dados $prestige, 
+     xlab = "Income Box cox", ylab = "Prestige");
+abline(coef(fit0bc), col = 2)
+```
+E estes são os dados plotados com a transformação realizada. Realmente não parece ter uma mudança drástica do caso linear comum.
+
+\newpage
+# Regressão por partes
+
+Aqui precisamos primeiro decidir onde será feito o corte, decidimos em torno dos 10000 já que parece haver uma mudança na tendencia da curva em torno deste valor. Então precisamos começar a organizar os dados e as regressões cortando a base de dados
+
+```{r}
+# Cortando os dados
+dado_filtrado_low <- dados %>%
+  filter(income < 10000)
+
+dado_filtrado_hig <- dados %>%
+  filter(income > 10000)
+
+# Ajustando as regressões para cada parte
+fit_low <- lm(prestige ~ income, data = dado_filtrado_low)  
+fit_hig <- lm(prestige ~ income, data = dado_filtrado_hig) 
+
+# Predizendo so valores que usaremos para plotar
+nd_low <- data.frame(income = 1:10000)
+nd_low$y <- predict(fit_low, nd_low)
+
+nd_hig <- data.frame(income = 10000:25000)
+nd_hig$y <- predict(fit_hig, nd_hig)
+
+plot(dados $income, dados $prestige, 
+     xlab = "Income", ylab = "Prestige");
+with(nd_low, lines(y ~ income, col=2));
+with(nd_hig, lines(y ~ income, col=3))
+```
+
+## Utilizando library Segmented
+
+Como a regressão por partes é muito custosa a se fazer na mão procuramos uma biblioteca que automatiza esse fator para nós e encontramos a Segmented, ela necessita de um valor inicial de chute para cada nó e tenta minimizar a função de verossimilhança iterativamente
+
+```{r}
+library(segmented)
+
+fit.Segmentada <- segmented(fit01, seg.Z = ~income, psi = 10000)
+summary(fit.Segmentada)
+
+```
+Com o chute inicial o algoritmo convergiu para um nó em 12.142,1
+Plotando em cima dos dados
+
+```{r}
+plot(dados $income, dados $prestige, 
+     xlab = "Income", ylab = "Prestige")
+plot(fit.Segmentada, add = T)
+```
+Vêmos que o pacote tem opções para mais formas de regressão, não encontramos nada para evitar que o nó ligue entre cada secção então ela acaba beirando o spline, que será o próximo ajuste a ser testado.
+
+\newpage
+# Smoothing Spline
+
+A diferença entre regressão segmentada e Spline é que a regressão é continua. Como já fizemos uma regressão contínua no exemplo anterior pularemos direto para a Smoothing Spline, que utiliza a penalização da segunda derivada da curva no ponto nó para a soma de minimos quadrados. Para isso utilizaremos a função "smoothing.spline"
+
+```{r warning=FALSE}
+library(splines)
+
+plot(dados $income, dados $prestige, 
+     xlab = "Income", ylab = "Prestige")
+fitss <- smooth.spline(x = dados$income, y = dados$prestige, cv = F)
+
+lines(fitss)
+```
+Desabilitamos a validação cruzada para conseguir contrastar melhor com a polinomial de grau 2, já que ambas as regressões ficaram muito parecidas
+
+Mas para efeito de comparação, por que não plotar ambas?
+
+```{r include=FALSE}
+fitss2 <- smooth.spline(x = dados$income, y = dados$prestige, cv = T)
+```
+```{r echo=FALSE}
+plot(dados $income, dados $prestige, 
+     xlab = "Income", ylab = "Prestige")
+lines(fitss2, col = 1)
+with(nd, lines(y ~ income, col=2))
+legend("bottomright", legend = c("ss", "lm"), col = c(1,2), bty = "n", lty = 1)
+
+```
+
